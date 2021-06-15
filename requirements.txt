@@ -1,0 +1,9 @@
+Cython~=0.29.23
+
+zss~=1.2.0
+pycparser~=2.20
+clara~=1.0
+pydantic~=1.8.2
+fastapi~=0.65.1
+setuptools~=56.2.0
+starlette~=0.14.2
