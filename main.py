@@ -61,7 +61,7 @@ from pydantic import BaseModel
 # oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-app = FastAPI()
+app = FastAPI(root_path='/clara')
 
 
 # def fake_hash_password(password: str):
@@ -115,11 +115,8 @@ app = FastAPI()
 @app.get("/", tags=["docs"])
 async def read_root():
     return RedirectResponse('./docs')
+    # return "hello world"
 
-
-@app.get("/phantom")
-async def read_phan():
-    return "Hello world"
 
 
 # @app.post("/token", tags=["authenticate"])
