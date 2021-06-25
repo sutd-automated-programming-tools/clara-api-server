@@ -13,7 +13,7 @@ Deployment
 ===========
 - launch a new ec2 instance
 - Run the following commands in the terminal 
-```
+```bash
 echo '-----BEGIN OPENSSH PRIVATE KEY-----  
 b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
 QyNTUxOQAAACAb4PQAtA0LXl1x8NS/K0tIetEeQ0h+LawHh6vmcC8TAQAAAKDRzJzJ0cyc
