@@ -16,7 +16,6 @@ echo 'execute make'
 make
 echo 'launch traefik proxy server'
 sudo nohup ./traefik --configFile=traefik.toml &> /dev/null &
-echo 'launch server'
+echo 'launching  server at:'
 nohup uvicorn main:app  --host 0.0.0.0 &>/dev/null &
-
-
+echo $(curl ifconfig.me 2>/dev/null)/clara/
