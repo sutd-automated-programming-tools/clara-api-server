@@ -9,7 +9,7 @@ programming assignments, described in the following paper:
 *Automated Clustering and Program Repair forIntroductory Programming Assignments*
 (https://dl.acm.org/doi/10.1145/3192366.3192387 and https://arxiv.org/abs/1603.03165).
 
-Development
+Deployment
 ===========
 - launch a new ec2 instance
 - Run the following commands in the terminal 
