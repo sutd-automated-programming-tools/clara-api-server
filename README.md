@@ -24,7 +24,7 @@ Deployment
 - `git clone git@github.com:sutd-automated-programming-tools/clara-api-server.git`
 - `cd clara-api-server`
 - `. ec2script.sh`
-
+- access api at `./clara/`
 
 Dependencies
 ============
