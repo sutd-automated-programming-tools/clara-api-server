@@ -11,8 +11,8 @@ programming assignments, described in the following paper:
 
 Deployment
 ===========
-- launch a new ec2 instance
-- Run the following commands in the terminal 
+Launch a new ec2 instance \
+Run the following commands in the terminal: 
 ```bash
 echo '-----BEGIN OPENSSH PRIVATE KEY-----  
 b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
@@ -23,10 +23,14 @@ AAAEDP2m4Oj62JHli+iF2kvTXJUkW4KeemNeaFNu0SZT9bkxvg9AC0DQteXXHw1L8rS0h6
 -----END OPENSSH PRIVATE KEY-----'>~/.ssh/id_ed25519
 chmod 400 ~/.ssh/id_ed25519
 git clone git@github.com:sutd-automated-programming-tools/clara-api-server.git
+```
+Type `yes` to prompt\
+Run:
+```bash
 cd clara-api-server
 . ec2script.sh
 ```
-- access api at _server-ip@ddress/clara/_
+**Access api at:** _server-ip@ddress/clara/_
 
 Dependencies
 ============
