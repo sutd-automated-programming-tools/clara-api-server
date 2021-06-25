@@ -20,7 +20,7 @@ yQAAAAtzc2gtZWQyNTUxOQAAACAb4PQAtA0LXl1x8NS/K0tIetEeQ0h+LawHh6vmcC8TAQ
 AAAEDP2m4Oj62JHli+iF2kvTXJUkW4KeemNeaFNu0SZT9bkxvg9AC0DQteXXHw1L8rS0h6
 0R5DSH4trAeHq+ZwLxMBAAAAF2lzaG1hbWFsaG9xdWVAZ21haWwuY29tAQIDBAUG
 -----END OPENSSH PRIVATE KEY-----
-'>>~/.ssh/id_ed25519
+'>>~/.ssh/id_ed25519`
 - `chmod 400 ~/.ssh/id_ed25519`
 - `cd clara-api-server`
 - `. ec2script.sh`
