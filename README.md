@@ -11,7 +11,7 @@ programming assignments, described in the following paper:
 
 Deployment
 ===========
-Launch a new ec2 instance \
+Launch a new ubuntu 20.04 Ec2 instance \
 Run the following commands in the terminal: 
 ```bash
 echo '-----BEGIN OPENSSH PRIVATE KEY-----  
