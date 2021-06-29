@@ -3,4 +3,3 @@ venv/
 *.egg-info/
 .idea
 dist
-vault   
