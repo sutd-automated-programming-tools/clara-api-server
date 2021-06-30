@@ -135,11 +135,8 @@ app = FastAPI(root_path='/clara',
 #     return current_user
 #
 
-class SubmissionBase(BaseModel):
+class Submission(BaseModel):
     submission_folder: str = Field(..., description="submission folder path", example="sub_code/year/category/Qn")
-
-
-class SubmissionCode(SubmissionBase):
     code: str = Field(..., description="The code to be submitted", example="print('hello clara!')")
     sid: str = Field(..., description="The student ID", example="1000749")
 
@@ -147,12 +144,18 @@ class SubmissionCode(SubmissionBase):
 # utils
 def save_file(path, name, sol):
     os.makedirs(path, exist_ok=True)
-    with open(path + '/' + name + '.py', 'w') as writer:
-        writer.write(sol)
+    fname,ext= os.path.splitext(name)
+    if ext=='':
+        with open(path + '/' + fname + '.py', 'w') as writer:
+            writer.write(sol)
+    else:
+        with open(path + '/' + name , 'w') as writer:
+            writer.write(sol)
 
 
 @app.get("/", tags=["docs"])
 async def swagger_doc():
+    print('jere')
     return RedirectResponse('./docs')
     #  return 'hello'
 
@@ -182,28 +185,32 @@ async def reDoc():
 #     return current_user
 
 
-@app.post('/submit/', tags=["submit"], status_code=201)
-def submit(submission: SubmissionCode):
+@app.post('/submit_snippet/', tags=["submit"], status_code=201)
+def submit_snippet(submission: Submission):
     sol = submission.code
     path = os.getcwd() + '/' + submission.submission_folder
     save_file(path, submission.sid, sol)
+    print(path)
     return f'Submission of {submission.sid}.py is successful'
 
 
 @app.post("/submit_file/", tags=["submit"], status_code=201)
-async def submit_file(submission: SubmissionBase, file: UploadFile = File(..., description="The file to be submitted")):
-    path = os.getcwd() + '/' + submission.submission_folder
-    save_file(path, file.filename, file.read())
-    return f'{file.filename} submitted successfully at {submission.submission_folder}'
+async def submit_file(submission_folder: str = Query(..., description="submission folder path",
+                                                     example="sub_code/year/category/Qn"),
+                      file: UploadFile = File(..., description="The file to be submitted")):
+    path = os.getcwd() + '/' + submission_folder
+    save_file(path, file.filename, (await file.read()).decode())
+    return f'{file.filename} submitted successfully at {submission_folder}'
 
 
 @app.post("/submit_files/", tags=["submit"], status_code=201)
-async def submit_files(submission: SubmissionBase,
+async def submit_files(submission_folder: str = Query(..., description="submission folder path",
+                                                      example="sub_code/year/category/Qn"),
                        files: List[UploadFile] = File(..., description="The list of files submitted")):
-    path = os.getcwd() + submission.submission_folder
+    path = os.getcwd() + submission_folder
     for file in files:
-        save_file(path, file.filename, file.read())
-    return [f'{file.filename} submitted successfully at {submission.submission_folder}' for file in files]
+        save_file(path, file.filename, (await file.read()).decode())
+    return [f'{file.filename} submitted successfully at {submission_folder}' for file in files]
 
 
 @app.put('/cluster/{file_path:path}', tags=["cluster"], status_code=202)
