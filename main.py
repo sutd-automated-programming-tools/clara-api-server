@@ -8,7 +8,26 @@ from starlette.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+tags_metadata = [
+    {
+        "name": "docs",
+        "description": "Links to generated documentations.",
+    },
+    {
+        "name": "submit",
+        "description": 'Comes in three _flavors_. Submits code as: **string,file or files**',
+    },
+    {
+        "name": "cluster",
+        "description": 'Comes in two _flavors_. Clusters specific **files or all files in a folder**',
+    },
+    {
+        "name": "feedback",
+        "description": 'Comes in two _flavors_. Give feedback on codes passed as **strings** or as a **file**',
+    },
+]
 
 # # to get a string like this run:
 # # openssl rand -hex 32
@@ -61,7 +80,11 @@ from pydantic import BaseModel
 # oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-app = FastAPI(root_path='/clara')
+# app = FastAPI()
+app = FastAPI(root_path='/clara',
+              title="Clara API Server",
+              description="An API for connecting with a  server which executes Clara",
+              openapi_tags=tags_metadata)
 
 
 # def fake_hash_password(password: str):
@@ -112,11 +135,33 @@ app = FastAPI(root_path='/clara')
 #     return current_user
 #
 
-@app.get("/", tags=["docs"])
-async def read_root():
-    return RedirectResponse('./docs')
-    # return "hello world"
+class SubmissionBase(BaseModel):
+    submission_folder: str = Field(..., description="submission folder path", example="sub_code/year/category/Qn")
 
+
+class SubmissionCode(SubmissionBase):
+    code: str = Field(..., description="The code to be submitted", example="print('hello clara!')")
+    sid: str = Field(..., description="The student ID", example="1000749")
+
+
+# utils
+def save_file(path, name, sol):
+    os.makedirs(path, exist_ok=True)
+    with open(path + '/' + name + '.py', 'w') as writer:
+        writer.write(sol)
+
+
+@app.get("/", tags=["docs"])
+async def swagger_doc():
+    return RedirectResponse('./docs')
+    #  return 'hello'
+
+
+@app.get("/redocs", tags=["docs"])
+async def reDoc():
+    'Another documentation Clara API'
+    return RedirectResponse('./redoc')
+    #  return 'hello'
 
 
 # @app.post("/token", tags=["authenticate"])
@@ -137,17 +182,28 @@ async def read_root():
 #     return current_user
 
 
-@app.post('/submit/{file_path:path}', tags=["submit"], status_code=201)
-def submit(code: str = Query(..., description="The code to be submitted"),
-           sid: str = Query(..., description="The student ID"),
-           file_path: str = Path(..., description="/sub_code/year/category/Qn", )):
-    sol = codecs.decode(code, 'unicode-escape')
-    path = os.getcwd() + file_path
-    os.makedirs(path, exist_ok=True)
+@app.post('/submit/', tags=["submit"], status_code=201)
+def submit(submission: SubmissionCode):
+    sol = submission.code
+    path = os.getcwd() + '/' + submission.submission_folder
+    save_file(path, submission.sid, sol)
+    return f'Submission of {submission.sid}.py is successful'
 
-    with open(path + '/' + sid + '.py', 'w') as writer:
-        writer.write(sol)
-    return 'Submission of {sid}.py is successful'
+
+@app.post("/submit_file/", tags=["submit"], status_code=201)
+async def submit_file(submission: SubmissionBase, file: UploadFile = File(..., description="The file to be submitted")):
+    path = os.getcwd() + '/' + submission.submission_folder
+    save_file(path, file.filename, file.read())
+    return f'{file.filename} submitted successfully at {submission.submission_folder}'
+
+
+@app.post("/submit_files/", tags=["submit"], status_code=201)
+async def submit_files(submission: SubmissionBase,
+                       files: List[UploadFile] = File(..., description="The list of files submitted")):
+    path = os.getcwd() + submission.submission_folder
+    for file in files:
+        save_file(path, file.filename, file.read())
+    return [f'{file.filename} submitted successfully at {submission.submission_folder}' for file in files]
 
 
 @app.put('/cluster/{file_path:path}', tags=["cluster"], status_code=202)
@@ -232,24 +288,3 @@ async def feedback_snippet(file_path: str = Path(..., description="/sub_code/yea
         return out.stderr.decode()
     else:
         return out.stdout.decode()
-
-
-@app.post("/uploadfile/{file_path:path}", tags=["submit"], status_code=201)
-async def submit_file(file_path: str = Path(..., description="/sub_code/year/category/Qn"),
-                      file: UploadFile = File(..., description="The file to be submitted")):
-    path = os.getcwd() + file_path
-    os.makedirs(path, exist_ok=True)
-    with open(f'{path}/{file.filename}', 'wb') as writer:
-        writer.write(await file.read())
-    return f'{file.filename} submitted successfully at {file_path}'
-
-
-@app.post("/uploadfiles/{file_path:path}", tags=["submit"], status_code=201)
-async def submit_files(file_path: str = Path(..., description="/sub_code/year/category/Qn"),
-                       files: List[UploadFile] = File(..., description="The list of files submitted")):
-    path = os.getcwd() + file_path
-    os.makedirs(path, exist_ok=True)
-    for file in files:
-        with open(f'{path}/{file.filename}', 'wb') as writer:
-            writer.write(await file.read())
-    return [f'{file.filename} submitted successfully at {file_path}' for file in files]
