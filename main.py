@@ -141,16 +141,42 @@ class Submission(BaseModel):
     sid: str = Field(..., description="The student ID", example="1000749")
 
 
+class ClusterMetadataBase(BaseModel):
+    submission_folder: str = Field(..., description="submission folder path to choose files from",
+                                   example="sub_code/year/category/Qn")
+    entryfnc: str = Field(..., description="The name of the entry function", example="computeDeriv")
+    args: str = Field(..., description="The argument parameters without spaces", example="[[[4.5]],[[1.0,3.0,5.5]]]")
+
+
+class ClusterMetadata(BaseModel):
+    submission_folder: str = Field(..., description="submission folder path to choose files from",
+                                   example="sub_code/year/category/Qn")
+    entryfnc: str = Field(..., description="The name of the entry function", example="computeDeriv")
+    args: str = Field(..., description="The argument parameters without spaces", example="[[[4.5]],[[1.0,3.0,5.5]]]")
+    filenames: List[str] = Field(..., description="The files to be clustered", example='["c1.py","c2.py"]')
+
+
 # utils
 def save_file(path, name, sol):
     os.makedirs(path, exist_ok=True)
-    fname,ext= os.path.splitext(name)
-    if ext=='':
-        with open(path + '/' + fname + '.py', 'w') as writer:
+    _, ext = os.path.splitext(name)
+    if ext == '':
+        with open(path + '/' + name + '.py', 'w') as writer:
             writer.write(sol)
     else:
-        with open(path + '/' + name , 'w') as writer:
+        with open(path + '/' + name, 'w') as writer:
             writer.write(sol)
+
+
+def cluster(cluster_path, path, entryfnc, args):
+    os.makedirs(cluster_path, exist_ok=True)
+    command = f'clara cluster {path} --clusterdir {cluster_path} --entryfnc {entryfnc} --args {args} ' \
+              f'--ignoreio 1'.split()
+    out = subprocess.run(command, capture_output=True)
+    if out.stdout == b'':
+        return out.stderr.decode()
+    else:
+        return out.stdout.decode()
 
 
 @app.get("/", tags=["docs"])
@@ -207,48 +233,35 @@ async def submit_file(submission_folder: str = Query(..., description="submissio
 async def submit_files(submission_folder: str = Query(..., description="submission folder path",
                                                       example="sub_code/year/category/Qn"),
                        files: List[UploadFile] = File(..., description="The list of files submitted")):
-    path = os.getcwd() + submission_folder
+    path = os.getcwd() + '/' + submission_folder
     for file in files:
         save_file(path, file.filename, (await file.read()).decode())
     return [f'{file.filename} submitted successfully at {submission_folder}' for file in files]
 
 
-@app.put('/cluster/{file_path:path}', tags=["cluster"], status_code=202)
-async def cluster(file_path: str = Path(..., description="/sub_code/year/category/Qn", ),
-                  entryfnc: str = Query(..., description="The name of the entry function"),
-                  args: str = Query(..., description="The argument parameters without spaces"),
-                  filenames: List[str] = Body(..., description="The file to be submitted")):
-    cluster_path = os.getcwd() + '/clusters' + file_path
+@app.put('/cluster_files', tags=["cluster"], status_code=202)
+async def cluster_files(cluster_metadata: ClusterMetadata):
+    cluster_path = os.getcwd() + '/clusters/' + cluster_metadata.submission_folder
+    folder_path = os.getcwd() + f"/{cluster_metadata.submission_folder}/"
+    if not os.path.exists(folder_path):
+        return f"{cluster_metadata.submission_folder} does not exit"
     path = ""
-    for filename in filenames:
-        path += os.getcwd() + f"{file_path}/" + filename + " "
-    os.makedirs(cluster_path, exist_ok=True)
-    command = f'clara cluster {path} --clusterdir {cluster_path} --entryfnc {entryfnc} --args {args} ' \
-              f'--ignoreio 1'.split()
-    out = subprocess.run(command, capture_output=True)
-    if out.stdout == b'':
-        return out.stderr.decode()
-    else:
-        return out.stdout.decode()
+    for filename in cluster_metadata.filenames:
+        path += os.getcwd() + f"/{cluster_metadata.submission_folder}/" + filename + " "
+    return cluster(cluster_path, path, cluster_metadata.entryfnc, cluster_metadata.args)
 
 
-@app.put('/cluster_folder/{file_path:path}', tags=["cluster"], status_code=202)
-async def cluster_folder(file_path: str = Path(..., description="/sub_code/year/category/Qn", ),
-                         entryfnc: str = Query(..., description="The name of the entry function"),
-                         args: str = Query(..., description="The argument parameters without spaces")):
-    cluster_path = os.getcwd() + '/clusters' + file_path
-    folder_path = os.getcwd() + f"{file_path}/"
+@app.put('/cluster_folder', tags=["cluster"], status_code=202)
+async def cluster_folder(cluster_metadata: ClusterMetadataBase):
+    cluster_path = os.getcwd() + '/clusters/' + cluster_metadata.submission_folder
+    folder_path = os.getcwd() + f"/{cluster_metadata.submission_folder}/"
     path = ""
-    for filename in os.listdir(folder_path):
-        path += folder_path + filename + " "
-    os.makedirs(cluster_path, exist_ok=True)
-    command = f'clara cluster {path} --clusterdir {cluster_path} --entryfnc {entryfnc} --args {args} ' \
-              f'--ignoreio 1'.split()
-    out = subprocess.run(command, capture_output=True)
-    if out.stdout == b'':
-        return out.stderr.decode()
+    if os.path.exists(folder_path):
+        for filename in os.listdir(folder_path):
+            path += folder_path + filename + " "
     else:
-        return out.stdout.decode()
+        return f"{cluster_metadata.submission_folder} does not exit"
+    return cluster(cluster_path, path, cluster_metadata.entryfnc, cluster_metadata.args)
 
 
 @app.put('/feedback/{file_path:path}', tags=["feedback"])
