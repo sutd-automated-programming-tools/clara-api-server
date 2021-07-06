@@ -135,6 +135,7 @@ app = FastAPI(root_path='/clara',
 #     return current_user
 #
 
+# Data models
 class Submission(BaseModel):
     submission_folder: str = Field(..., description="submission folder path", example="sub_code/year/category/Qn")
     code: str = Field(..., description="The code to be submitted", example="print('hello clara!')")
@@ -156,8 +157,18 @@ class ClusterMetadata(BaseModel):
     filenames: List[str] = Field(..., description="The files to be clustered", example='["c1.py","c2.py"]')
 
 
+class FeedbackModel(BaseModel):
+    submission_folder: str = Field(..., description="path to correct submissions", example="sub_code/year/category/Qn")
+    entryfnc: str = Field(..., description="The name of the entry function", example="computeDeriv")
+    args: str = Field(..., description="The argument parameters without spaces", example="[[[4.5]],[[1.0,3.0,5.5]]]")
+    # feedtype: Optional[str] = Field('python', description="python, simple or repair", example='python')
+    # ext: Optional[str] = Field('.py', description="File extenstions: .java, .py or .c", example='.py')
+    code: str = Field(..., description="The incorrect code for feedback", example='print("hello clara!")')
+
+
 # utils
 def save_file(path, name, sol):
+    """makes directory for submission and saves the solution"""
     os.makedirs(path, exist_ok=True)
     _, ext = os.path.splitext(name)
     if ext == '':
@@ -169,6 +180,7 @@ def save_file(path, name, sol):
 
 
 def cluster(cluster_path, path, entryfnc, args):
+    """makes cluster directory, executes clara cluster command and returns the result success or otherwise"""
     os.makedirs(cluster_path, exist_ok=True)
     command = f'clara cluster {path} --clusterdir {cluster_path} --entryfnc {entryfnc} --args {args} ' \
               f'--ignoreio 1'.split()
@@ -180,17 +192,14 @@ def cluster(cluster_path, path, entryfnc, args):
 
 
 @app.get("/", tags=["docs"])
-async def swagger_doc():
-    print('jere')
+def swagger_doc():
     return RedirectResponse('./docs')
-    #  return 'hello'
 
 
+# Another documentation Clara API
 @app.get("/redocs", tags=["docs"])
-async def reDoc():
-    'Another documentation Clara API'
+def reDoc():
     return RedirectResponse('./redoc')
-    #  return 'hello'
 
 
 # @app.post("/token", tags=["authenticate"])
@@ -210,25 +219,27 @@ async def reDoc():
 # async def read_users_me(current_user: User = Depends(get_current_active_user)):
 #     return current_user
 
-
+# make submission folder and submit the snippet
 @app.post('/submit_snippet/', tags=["submit"], status_code=201)
 def submit_snippet(submission: Submission):
     sol = submission.code
     path = os.getcwd() + '/' + submission.submission_folder
     save_file(path, submission.sid, sol)
-    print(path)
     return f'Submission of {submission.sid}.py is successful'
 
 
+# make submission folder, read and decode the file and submit it
 @app.post("/submit_file/", tags=["submit"], status_code=201)
 async def submit_file(submission_folder: str = Query(..., description="submission folder path",
                                                      example="sub_code/year/category/Qn"),
                       file: UploadFile = File(..., description="The file to be submitted")):
     path = os.getcwd() + '/' + submission_folder
+    print('here at submit file with r')
     save_file(path, file.filename, (await file.read()).decode())
     return f'{file.filename} submitted successfully at {submission_folder}'
 
 
+# make submission folder, read and decode files and submit them
 @app.post("/submit_files/", tags=["submit"], status_code=201)
 async def submit_files(submission_folder: str = Query(..., description="submission folder path",
                                                       example="sub_code/year/category/Qn"),
@@ -239,6 +250,7 @@ async def submit_files(submission_folder: str = Query(..., description="submissi
     return [f'{file.filename} submitted successfully at {submission_folder}' for file in files]
 
 
+# define cluster folder, and get filenames for clustering  and pass to clara function
 @app.put('/cluster_files', tags=["cluster"], status_code=202)
 async def cluster_files(cluster_metadata: ClusterMetadata):
     cluster_path = os.getcwd() + '/clusters/' + cluster_metadata.submission_folder
@@ -251,6 +263,7 @@ async def cluster_files(cluster_metadata: ClusterMetadata):
     return cluster(cluster_path, path, cluster_metadata.entryfnc, cluster_metadata.args)
 
 
+# define cluster folder, and get all filenames from the selected folder and pass to clara function
 @app.put('/cluster_folder', tags=["cluster"], status_code=202)
 async def cluster_folder(cluster_metadata: ClusterMetadataBase):
     cluster_path = os.getcwd() + '/clusters/' + cluster_metadata.submission_folder
@@ -264,47 +277,55 @@ async def cluster_folder(cluster_metadata: ClusterMetadataBase):
     return cluster(cluster_path, path, cluster_metadata.entryfnc, cluster_metadata.args)
 
 
-@app.put('/feedback/{file_path:path}', tags=["feedback"])
-async def feedback(file_path: str = Path(..., description="/sub_code/year/category/Qn", ),
-                   entryfnc: str = Query(..., description="The name of the entry function"),
-                   args: str = Query(..., description="The argument parameters without spaces"),
-                   feedtype: Optional[str] = Query('python', description="python, simple or repair"),
-                   file: UploadFile = File(..., description="The incorrect file for feedback"),
-                   ext: Optional[str] = Query('.py', description="File extenstions: .java, .py or .c")):
-    cluster_path = os.getcwd() + '/clusters' + f"{file_path}/"
+# generates path to cluster folder from submission path, gets all the file_path form the selected folder and pass to the
+# clara function along with the incorrect file generated from the code snippet
+@app.put('/feedback_snippet/', tags=["feedback"])
+async def feedback_snippet(feedback_metadata: FeedbackModel):
+    cluster_path = os.getcwd() + '/clusters' + f"/{feedback_metadata.submission_folder}/"
     path = ""
-    for filename in [f for f in os.listdir(cluster_path) if f'{ext}' in f]:
+    if not os.path.exists(cluster_path):
+        return f'{feedback_metadata.submission_folder} does not exist'
+    # for filename in [f for f in os.listdir(cluster_path) if f'{feedback_metadata.ext}' in f]:
+    for filename in [f for f in os.listdir(cluster_path)]:
         path += cluster_path + filename + " "
-    os.makedirs('incorrect', exist_ok=True)
-    with open(f'incorrect/{file.filename}', 'wb') as writer:
-        writer.write(await file.read())
-    command = f'clara feedback {path} incorrect/{file.filename} --entryfnc {entryfnc} --args {args}' \
-              f' --ignoreio 1 --feedtype ' f'{feedtype} '.split()
+    # with open(f'incorrect/incorrect{feedback_metadata.ext}', 'w') as writer:
+    with open(f'incorrect/incorrect.py', 'w') as writer:
+        writer.write(feedback_metadata.code)
+    command = f'clara feedback {path} incorrect/incorrect.py --entryfnc {feedback_metadata.entryfnc}' \
+              f' --args {feedback_metadata.args} --ignoreio 1 --feedtype python '.split()
+    # f' --args {feedback_metadata.args} --ignoreio 1 --feedtype {feedback_metadata.feedtype} '.split()
     out = subprocess.run(command, capture_output=True)
     if out.stdout == b'':
         return out.stderr.decode()
     else:
         return out.stdout.decode()
 
-
-@app.put('/feedback_snippet/{file_path:path}', tags=["feedback"])
-async def feedback_snippet(file_path: str = Path(..., description="/sub_code/year/category/Qn", ),
-                           entryfnc: str = Query(..., description="The name of the entry function"),
-                           args: str = Query(..., description="The argument parameters without spaces"),
-                           feedtype: Optional[str] = Query('python', description="python, simple or repair"),
-                           code: str = Query(..., description="The incorrect code for feedback"),
-                           ext: Optional[str] = Query('.py', description="File extenstions: .java, .py or .c")):
-    cluster_path = os.getcwd() + '/clusters' + f"{file_path}/"
-    path = ""
-    for filename in [f for f in os.listdir(cluster_path) if f'{ext}' in f]:
-        path += cluster_path + filename + " "
-    sol = codecs.decode(code, 'unicode-escape')
-    with open(f'incorrect/incorrect{ext}', 'w') as writer:
-        writer.write(sol)
-    command = f'clara feedback {path} incorrect/incorrect{ext} --entryfnc {entryfnc} --args {args} --ignoreio 1 --feedtype ' \
-              f'{feedtype} '.split()
-    out = subprocess.run(command, capture_output=True)
-    if out.stdout == b'':
-        return out.stderr.decode()
-    else:
-        return out.stdout.decode()
+# No need to implement this feature
+# @app.put('/feedback_file', tags=["feedback"])
+# async def feedback_file(submission_folder: str = Query(..., description="path to correct submissions",
+#                                                        example="sub_code/year/category/Qn"),
+#                         entryfnc: str = Query(..., description="The name of the entry function",
+#                                               example="computeDeriv"),
+#                         args: str = Query(..., description="The argument parameters without spaces",
+#                                           example="[[[4.5]],[[1.0,3.0,5.5]]]"),
+#                         feedtype: Optional[str] = Query('python', description="python, simple or repair",
+#                                                         example='python'),
+#                         file: UploadFile = File(..., description="The incorrect file for feedback"),
+#                         ext: Optional[str] = Query('.py', description="File extenstions: .java, .py or .c",
+#                                                    example='.py')):
+#     cluster_path = os.getcwd() + '/clusters' + f"/{submission_folder}/"
+#     path = ""
+#     if not os.path.exists(cluster_path):
+#         return f'{submission_folder} does not exist'
+#     for filename in [f for f in os.listdir(cluster_path) if f'{ext}' in f]:
+#         path += cluster_path + filename + " "
+#     os.makedirs('incorrect', exist_ok=True)
+#     with open(f'incorrect/{file.filename}', 'wb') as writer:
+#         writer.write(await file.read())
+#     command = f'clara feedback {path} incorrect/{file.filename} --entryfnc {entryfnc} --args {args}' \
+#               f' --ignoreio 1 --feedtype ' f'{feedtype} '.split()
+#     out = subprocess.run(command, capture_output=True)
+#     if out.stdout == b'':
+#         return out.stderr.decode()
+#     else:
+#         return out.stdout.decode()
