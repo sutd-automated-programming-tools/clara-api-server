@@ -1,7 +1,7 @@
 echo 'adding path to .bashrc'
 echo 'export LD_LIBRARY_PATH=/usr/lib/lp_solve/
-export PATH=$PATH:/home/ubuntu/.local/bin'>>../.bashrc
-. ../.bashrc
+export PATH=$PATH:/home/ubuntu/.local/bin'>>~/.bashrc
+. ~/.bashrc
 echo 'get update'
 sudo apt-get update
 echo 'install pip'
