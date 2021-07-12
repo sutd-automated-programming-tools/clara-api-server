@@ -180,8 +180,13 @@ def save_file(path, name, sol):
 
 
 def make_index(path):
+    _, truncated = path.split(os.getcwd() + '/')
+    if os.path.isfile('index.txt'):
+        with open('index.txt', 'r') as reader:
+            if truncated + '\n' in reader.readlines():
+                return
     with open('index.txt', 'a') as writer:
-        writer.write(path)
+        writer.write(truncated + '\n')
 
 
 def cluster(cluster_path, path, entryfnc, args):
@@ -300,10 +305,22 @@ async def feedback_snippet(feedback_metadata: FeedbackModel):
         return out.stdout.decode()
 
 
-@app.put('/get_submission_folders/', tags=["index"])
+@app.get('/get_submission_folders/', tags=["index"])
 def get_index():
-    with open('index.txt', 'r') as reader:
-        return reader.read()
+    if os.path.isfile('index.txt'):
+        with open('index.txt', 'r') as reader:
+            return [s[:-1] for s in reader.readlines()]
+    return 'no files submitted'
+
+
+@app.get('/get_submitted_file_names/', tags=["index"])
+def get_submitted_file_names(path):
+    complete_path=os.getcwd()+'/'+path
+    if os.path.exists(complete_path):
+        return os.listdir(complete_path)
+    return 'path does not exist'
+
+
 # No need to implement this feature
 # @app.put('/feedback_file', tags=["feedback"])
 # async def feedback_file(submission_folder: str = Query(..., description="path to correct submissions",
