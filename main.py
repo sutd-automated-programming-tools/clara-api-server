@@ -1,5 +1,5 @@
-import codecs
 import os
+import tarfile
 import subprocess
 from typing import Optional, List
 
@@ -179,6 +179,11 @@ def save_file(path, name, sol):
             writer.write(sol)
 
 
+def make_index(path):
+    with open('index.txt', 'a') as writer:
+        writer.write(path)
+
+
 def cluster(cluster_path, path, entryfnc, args):
     """makes cluster directory, executes clara cluster command and returns the result success or otherwise"""
     os.makedirs(cluster_path, exist_ok=True)
@@ -225,29 +230,23 @@ def submit_snippet(submission: Submission):
     sol = submission.code
     path = os.getcwd() + '/' + submission.submission_folder
     save_file(path, submission.sid, sol)
+    make_index(path)
     return f'Submission of {submission.sid}.py is successful'
 
 
 # make submission folder, read and decode the file and submit it
-@app.post("/submit_file/", tags=["submit"], status_code=201)
-async def submit_file(submission_folder: str = Query(..., description="submission folder path",
-                                                     example="sub_code/year/category/Qn"),
-                      file: UploadFile = File(..., description="The file to be submitted")):
+@app.post("/submit_compressed_file/", tags=["submit"], status_code=201)
+async def submit_compressed_file(submission_folder: str = Query(..., description="submission folder path",
+                                                                example="sub_code/year/category/Qn"),
+                                 file: UploadFile = File(..., description="The file to be submitted")):
     path = os.getcwd() + '/' + submission_folder
-    print('here at submit file with r')
-    save_file(path, file.filename, (await file.read()).decode())
+    os.makedirs('compressed_files', exist_ok=True)
+    with open('compressed_files/' + file.filename, 'wb') as writer:
+        writer.write(await file.read())
+    with tarfile.open('compressed_files/' + file.filename) as tar:
+        tar.extractall(path)
+    make_index(path)
     return f'{file.filename} submitted successfully at {submission_folder}'
-
-
-# make submission folder, read and decode files and submit them
-@app.post("/submit_files/", tags=["submit"], status_code=201)
-async def submit_files(submission_folder: str = Query(..., description="submission folder path",
-                                                      example="sub_code/year/category/Qn"),
-                       files: List[UploadFile] = File(..., description="The list of files submitted")):
-    path = os.getcwd() + '/' + submission_folder
-    for file in files:
-        save_file(path, file.filename, (await file.read()).decode())
-    return [f'{file.filename} submitted successfully at {submission_folder}' for file in files]
 
 
 # define cluster folder, and get filenames for clustering  and pass to clara function
@@ -300,6 +299,11 @@ async def feedback_snippet(feedback_metadata: FeedbackModel):
     else:
         return out.stdout.decode()
 
+
+@app.put('/get_submission_folders/', tags=["index"])
+def get_index():
+    with open('index.txt', 'r') as reader:
+        return reader.read()
 # No need to implement this feature
 # @app.put('/feedback_file', tags=["feedback"])
 # async def feedback_file(submission_folder: str = Query(..., description="path to correct submissions",
@@ -329,3 +333,14 @@ async def feedback_snippet(feedback_metadata: FeedbackModel):
 #         return out.stderr.decode()
 #     else:
 #         return out.stdout.decode()
+
+
+# # make submission folder, read and decode files and submit them
+# @app.post("/submit_files/", tags=["submit"], status_code=201)
+# async def submit_files(submission_folder: str = Query(..., description="submission folder path",
+#                                                       example="sub_code/year/category/Qn"),
+#                        files: List[UploadFile] = File(..., description="The list of files submitted")):
+#     path = os.getcwd() + '/' + submission_folder
+#     for file in files:
+#         save_file(path, file.filename, (await file.read()).decode())
+#     return [f'{file.filename} submitted successfully at {submission_folder}' for file in files]
