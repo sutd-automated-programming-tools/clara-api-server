@@ -27,6 +27,10 @@ tags_metadata = [
         "name": "feedback",
         "description": 'Comes in two _flavors_. Give feedback on codes passed as **strings** or as a **file**',
     },
+    {
+        "name": "index",
+        "description": 'Comes in two _flavors_. Gets submission folders or all the files in a given submission folder',
+    },
 ]
 
 # # to get a string like this run:
@@ -167,8 +171,10 @@ class FeedbackModel(BaseModel):
 
 
 # utils
+
+
+# makes directory for submission and saves the solution
 def save_file(path, name, sol):
-    """makes directory for submission and saves the solution"""
     os.makedirs(path, exist_ok=True)
     _, ext = os.path.splitext(name)
     if ext == '':
@@ -179,8 +185,9 @@ def save_file(path, name, sol):
             writer.write(sol)
 
 
+# make a index.txt file to save all the submission folders
 def make_index(path):
-    _, truncated = path.split(os.getcwd() + '/')
+    _, truncated = path.split(os.getcwd() + '/submissions/')
     if os.path.isfile('index.txt'):
         with open('index.txt', 'r') as reader:
             if truncated + '\n' in reader.readlines():
@@ -189,8 +196,8 @@ def make_index(path):
         writer.write(truncated + '\n')
 
 
+# makes cluster directory, executes clara cluster command and returns the result success or otherwise
 def cluster(cluster_path, path, entryfnc, args):
-    """makes cluster directory, executes clara cluster command and returns the result success or otherwise"""
     os.makedirs(cluster_path, exist_ok=True)
     command = f'clara cluster {path} --clusterdir {cluster_path} --entryfnc {entryfnc} --args {args} ' \
               f'--ignoreio 1'.split()
@@ -233,7 +240,7 @@ def reDoc():
 @app.post('/submit_snippet/', tags=["submit"], status_code=201)
 def submit_snippet(submission: Submission):
     sol = submission.code
-    path = os.getcwd() + '/' + submission.submission_folder
+    path = os.getcwd() + '/submissions/' + submission.submission_folder
     save_file(path, submission.sid, sol)
     make_index(path)
     return f'Submission of {submission.sid}.py is successful'
@@ -244,7 +251,7 @@ def submit_snippet(submission: Submission):
 async def submit_compressed_file(submission_folder: str = Query(..., description="submission folder path",
                                                                 example="sub_code/year/category/Qn"),
                                  file: UploadFile = File(..., description="The file to be submitted")):
-    path = os.getcwd() + '/' + submission_folder
+    path = os.getcwd() + '/submissions/' + submission_folder
     os.makedirs('compressed_files', exist_ok=True)
     with open('compressed_files/' + file.filename, 'wb') as writer:
         writer.write(await file.read())
@@ -258,7 +265,7 @@ async def submit_compressed_file(submission_folder: str = Query(..., description
 @app.put('/cluster_files', tags=["cluster"], status_code=202)
 async def cluster_files(cluster_metadata: ClusterMetadata):
     cluster_path = os.getcwd() + '/clusters/' + cluster_metadata.submission_folder
-    folder_path = os.getcwd() + f"/{cluster_metadata.submission_folder}/"
+    folder_path = os.getcwd() + f"/submissions/{cluster_metadata.submission_folder}/"
     if not os.path.exists(folder_path):
         return f"{cluster_metadata.submission_folder} does not exit"
     path = ""
@@ -271,7 +278,7 @@ async def cluster_files(cluster_metadata: ClusterMetadata):
 @app.put('/cluster_folder', tags=["cluster"], status_code=202)
 async def cluster_folder(cluster_metadata: ClusterMetadataBase):
     cluster_path = os.getcwd() + '/clusters/' + cluster_metadata.submission_folder
-    folder_path = os.getcwd() + f"/{cluster_metadata.submission_folder}/"
+    folder_path = os.getcwd() + f"/submissions/{cluster_metadata.submission_folder}/"
     path = ""
     if os.path.exists(folder_path):
         for filename in os.listdir(folder_path):
@@ -305,6 +312,7 @@ async def feedback_snippet(feedback_metadata: FeedbackModel):
         return out.stdout.decode()
 
 
+# gets all the submission folders
 @app.get('/get_submission_folders/', tags=["index"])
 def get_index():
     if os.path.isfile('index.txt'):
@@ -313,13 +321,14 @@ def get_index():
     return 'no files submitted'
 
 
+# gets all the files under a submission folder
 @app.get('/get_submitted_file_names/', tags=["index"])
-def get_submitted_file_names(path):
-    complete_path=os.getcwd()+'/'+path
+def get_submitted_file_names(submission_folder: str = Query(..., description="path to correct submissions",
+                                                            example="sub_code/year/category/Qn")):
+    complete_path = os.getcwd() + '/submissions/' + submission_folder
     if os.path.exists(complete_path):
         return os.listdir(complete_path)
     return 'path does not exist'
-
 
 # No need to implement this feature
 # @app.put('/feedback_file', tags=["feedback"])
