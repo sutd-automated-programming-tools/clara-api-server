@@ -263,7 +263,7 @@ async def submit_compressed_file(submission_folder: str = Query(..., description
 
 # define cluster folder, and get filenames for clustering  and pass to clara function
 @app.put('/cluster_files', tags=["cluster"], status_code=202)
-async def cluster_files(cluster_metadata: ClusterMetadata):
+def cluster_files(cluster_metadata: ClusterMetadata):
     cluster_path = os.getcwd() + '/clusters/' + cluster_metadata.submission_folder
     folder_path = os.getcwd() + f"/submissions/{cluster_metadata.submission_folder}/"
     if not os.path.exists(folder_path):
@@ -276,7 +276,7 @@ async def cluster_files(cluster_metadata: ClusterMetadata):
 
 # define cluster folder, and get all filenames from the selected folder and pass to clara function
 @app.put('/cluster_folder', tags=["cluster"], status_code=202)
-async def cluster_folder(cluster_metadata: ClusterMetadataBase):
+def cluster_folder(cluster_metadata: ClusterMetadataBase):
     cluster_path = os.getcwd() + '/clusters/' + cluster_metadata.submission_folder
     folder_path = os.getcwd() + f"/submissions/{cluster_metadata.submission_folder}/"
     path = ""
@@ -291,13 +291,13 @@ async def cluster_folder(cluster_metadata: ClusterMetadataBase):
 # generates path to cluster folder from submission path, gets all the file_path form the selected folder and pass to the
 # clara function along with the incorrect file generated from the code snippet
 @app.put('/feedback_snippet/', tags=["feedback"])
-async def feedback_snippet(feedback_metadata: FeedbackModel):
+def feedback_snippet(feedback_metadata: FeedbackModel):
     cluster_path = os.getcwd() + '/clusters' + f"/{feedback_metadata.submission_folder}/"
     path = ""
     if not os.path.exists(cluster_path):
         return f'{feedback_metadata.submission_folder} does not exist'
     # for filename in [f for f in os.listdir(cluster_path) if f'{feedback_metadata.ext}' in f]:
-    for filename in [f for f in os.listdir(cluster_path)]:
+    for filename in [f for f in os.listdir(cluster_path) if os.path.splitext(f)[1] == '.py']:
         path += cluster_path + filename + " "
     # with open(f'incorrect/incorrect{feedback_metadata.ext}', 'w') as writer:
     with open(f'incorrect/incorrect.py', 'w') as writer:
