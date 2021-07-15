@@ -25,20 +25,20 @@ tags_metadata = [
     },
     {
         "name": "submit",
-        "description": 'Comes in three _flavors_. Submits code as: **string,file or files**',
+        "description": 'Comes in two _flavors_. Submits code as: **string or tarfiles**',
     },
     {
         "name": "cluster",
         "description": 'Comes in two _flavors_. Clusters specific **files or all files in a folder**',
     },
     {
-        "name": "feedback",
-        "description": 'Comes in two _flavors_. Give feedback on codes passed as **strings** or as a **file**',
+        "name": "delete",
+        "description": 'Comes in two _flavors_. Deletes **submission folder** or a **file**',
     },
-    # {
-    #     "name": "feedback",
-    #     "description": 'Comes in two _flavors_. Give feedback on codes passed as **strings** or as a **file**',
-    # },
+    {
+        "name": "feedback",
+        "description": 'Give feedback on codes passed as a **string**',
+    },
     {
         "name": "index",
         "description": 'Comes in two _flavors_. Gets submission folders or all the files in a given submission folder',
@@ -407,16 +407,16 @@ def get_submitted_file_names(submission_folder: str = Query(..., description="pa
     return 'path does not exist'
 
 
-# gets all the submission folders
-@app.post('/get_submission_folders/', tags=["delete"])
-def get_index(submission_folder: str = Query(..., description="path to correct submissions",
-                                             example="sub_code/year/category/Qn"),
-              current_user: User = Depends(get_current_active_user)):
+# deletes a submission_folder and all its contents
+@app.post('/delete_submission_folder/', tags=["delete"])
+def delete_submission_folder(submission_folder: str = Query(..., description="path to correct submissions",
+                                                            example="sub_code/year/category/Qn"),
+                             current_user: User = Depends(get_current_active_user)):
     if os.path.isfile('index.txt'):
         with open('index.txt', 'r') as reader:
             arr = [s[:-1] for s in reader.readlines() if submission_folder != s[:-1]]
-        s=''.join(arr)
-        with open('index.txt','w') as writer:
+        s = ''.join(arr)
+        with open('index.txt', 'w') as writer:
             writer.write(s)
         complete_path = os.getcwd() + '/submissions/' + submission_folder
         if os.path.exists(complete_path):
@@ -425,20 +425,20 @@ def get_index(submission_folder: str = Query(..., description="path to correct s
     return f'{submission_folder} is not found'
 
 
-@app.post('/get_submitted_file_names/', tags=["delete"])
-def get_submitted_file_names(submission_folder: str = Query(..., description="path to correct submissions",
-                                                            example="sub_code/year/category/Qn"),
-                            solution_file: str = Query(..., description="name of the file to be deleted",
-                                                            example="1000749.py"),
-                             current_user: User = Depends(get_current_active_user)):
+# deletes a solution_file under a submission_folder
+@app.post('/delete_submission_file/', tags=["delete"])
+def delete_submission_file(submission_folder: str = Query(..., description="path to correct submissions",
+                                                          example="sub_code/year/category/Qn"),
+                           solution_file: str = Query(..., description="name of the file to be deleted",
+                                                      example="1000749.py"),
+                           current_user: User = Depends(get_current_active_user)):
     complete_path = os.getcwd() + '/submissions/' + submission_folder
     if os.path.exists(complete_path):
         if solution_file in os.listdir(complete_path):
-            os.remove(complete_path+'/'+solution_file)
+            os.remove(complete_path + '/' + solution_file)
             return f'{solution_file} is removed'
         return f'{solution_file} does not exist'
     return f'{submission_folder} does not exist'
-# gets all the files under a submission folder
 
 # No need to implement this feature
 # @app.put('/feedback_file', tags=["feedback"])
