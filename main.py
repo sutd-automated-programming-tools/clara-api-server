@@ -1,6 +1,7 @@
 import os
 import tarfile
 import subprocess
+import shutil
 from typing import Optional, List
 from datetime import datetime, timedelta
 from fastapi import FastAPI, File, UploadFile, Path, Query, Body, Depends, HTTPException, status
@@ -34,6 +35,10 @@ tags_metadata = [
         "name": "feedback",
         "description": 'Comes in two _flavors_. Give feedback on codes passed as **strings** or as a **file**',
     },
+    # {
+    #     "name": "feedback",
+    #     "description": 'Comes in two _flavors_. Give feedback on codes passed as **strings** or as a **file**',
+    # },
     {
         "name": "index",
         "description": 'Comes in two _flavors_. Gets submission folders or all the files in a given submission folder',
@@ -388,7 +393,7 @@ def get_index(current_user: User = Depends(get_current_active_user)):
     if os.path.isfile('index.txt'):
         with open('index.txt', 'r') as reader:
             return [s[:-1] for s in reader.readlines()]
-    return 'no files submitted'
+    return 'no submissions exist'
 
 
 # gets all the files under a submission folder
@@ -400,6 +405,40 @@ def get_submitted_file_names(submission_folder: str = Query(..., description="pa
     if os.path.exists(complete_path):
         return os.listdir(complete_path)
     return 'path does not exist'
+
+
+# gets all the submission folders
+@app.post('/get_submission_folders/', tags=["delete"])
+def get_index(submission_folder: str = Query(..., description="path to correct submissions",
+                                             example="sub_code/year/category/Qn"),
+              current_user: User = Depends(get_current_active_user)):
+    if os.path.isfile('index.txt'):
+        with open('index.txt', 'r') as reader:
+            arr = [s[:-1] for s in reader.readlines() if submission_folder != s[:-1]]
+        s=''.join(arr)
+        with open('index.txt','w') as writer:
+            writer.write(s)
+        complete_path = os.getcwd() + '/submissions/' + submission_folder
+        if os.path.exists(complete_path):
+            shutil.rmtree(complete_path)
+            return f'{submission_folder} is deleted'
+    return f'{submission_folder} is not found'
+
+
+@app.post('/get_submitted_file_names/', tags=["delete"])
+def get_submitted_file_names(submission_folder: str = Query(..., description="path to correct submissions",
+                                                            example="sub_code/year/category/Qn"),
+                            solution_file: str = Query(..., description="name of the file to be deleted",
+                                                            example="1000749.py"),
+                             current_user: User = Depends(get_current_active_user)):
+    complete_path = os.getcwd() + '/submissions/' + submission_folder
+    if os.path.exists(complete_path):
+        if solution_file in os.listdir(complete_path):
+            os.remove(complete_path+'/'+solution_file)
+            return f'{solution_file} is removed'
+        return f'{solution_file} does not exist'
+    return f'{submission_folder} does not exist'
+# gets all the files under a submission folder
 
 # No need to implement this feature
 # @app.put('/feedback_file', tags=["feedback"])
