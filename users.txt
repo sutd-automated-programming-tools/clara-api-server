@@ -1,0 +1,23 @@
+"username": "chester",
+"password": "secret"
+
+"username": "poskitt",
+"password": "securepassword"
+
+"username": "chester",
+"password": secret
+
+"username": "oka",
+"password": "oka"
+
+"username": "cyrille",
+"password": "pyramid"
+
+"username": "norman",
+"password": "megashield"
+
+"username": "charles",
+"password": "xmen"
+
+"username": "ismam",
+"password": "barelypass"

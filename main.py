@@ -2,7 +2,7 @@ import os
 import tarfile
 import subprocess
 from typing import Optional, List
-
+from datetime import datetime, timedelta
 from fastapi import FastAPI, File, UploadFile, Path, Query, Body, Depends, HTTPException, status
 from starlette.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -10,6 +10,13 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel, Field
 
+# to get a string like this run:
+# openssl rand -hex 32
+SECRET_KEY = "3a420781b6e8b5d7407588cb82aa642f02679988c3e1f4ad95102ac7aab596bb"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+# Metadata will show up as descriptions along with each tag
 tags_metadata = [
     {
         "name": "docs",
@@ -31,58 +38,79 @@ tags_metadata = [
         "name": "index",
         "description": 'Comes in two _flavors_. Gets submission folders or all the files in a given submission folder',
     },
+    {
+        "name": "login",
+        "description": 'Key in details for authorization',
+    },
+    {
+        "name": "user",
+        "description": 'gets user information',
+    },
 ]
 
-# # to get a string like this run:
-# # openssl rand -hex 32
-# SECRET_KEY = "3a420781b6e8b5d7407588cb82aa642f02679988c3e1f4ad95102ac7aab596bb"
-# ALGORITHM = "HS256"
-# ACCESS_TOKEN_EXPIRE_MINUTES = 30
-#
-#
-# fake_users_db = {
-#     "chester": {
-#         "username": "chester",
-#         "full_name": "Chester Koh Boon Hong",
-#         "email": "chester_koh@mymail.sutd.edu.sg",
-#         # "hashed_password": "$2b$12$t5u4t2HgemA21uhsRrk24.0MoXZSq2lYZJu/5GQpqLx42IT7NRQJm",  # pass: secret
-#         "hashed_password": "fakehashedsecret",
-#         "disabled": False,
-#     },
-#     "alice": {
-#         "username": "poskitt",
-#         "full_name": "Christopher Michael POSKITT",
-#         "email": " cposkitt@smu.edu.sg",
-#         "hashed_password": "fakehashedsecret2",
-#         "disabled": True,
-#     },
-# }
-#
-#
-# class Token(BaseModel):
-#     access_token: str
-#     token_type: str
-#
-#
-# class TokenData(BaseModel):
-#     username: Optional[str] = None
-#
-#
-# class User(BaseModel):
-#     username: str
-#     email: Optional[str] = None
-#     full_name: Optional[str] = None
-#     disabled: Optional[bool] = None
-#
-#
-# class UserInDB(User):
-#     hashed_password: str
-#
-#
-# pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-#
-# oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+# context to manage pasaword like verifying and generating etc.
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+# Fake DB that stores temporary username and password
+fake_users_db = {
+    "chester": {
+        "username": "chester",
+        "full_name": "Chester Koh Boon Hong",
+        "email": "chester_koh@mymail.sutd.edu.sg",
+        "hashed_password": "$2b$12$t5u4t2HgemA21uhsRrk24.0MoXZSq2lYZJu/5GQpqLx42IT7NRQJm",  # pass: secret
+        "disabled": True,
+    },
+    "poskitt": {
+        "username": "poskitt",
+        "full_name": "Christopher Michael POSKITT",
+        "email": " cposkitt@smu.edu.sg",
+        "hashed_password": '$2b$12$Yr8U8/aSsLvTHAkkYQHTYe9ZrmcCG39X6/VC/oEcS9MaHwfRbUpuu',  # pass: securepassword
+        "disabled": False,
+    },
+    "oka": {
+        "username": "oka",
+        "full_name": "Oka Kurniawan",
+        "email": " oka_kurniawan@sutd.edu.sg",
+        "hashed_password": '$2b$12$nVQ3ghFwkedWA.m548shW.pSh0S4XMoeZV1tBBit7wcdEvv/zEAyS',  # pass: firewall
+        "disabled": False,
+    },
+    "cyrille": {
+        "username": "cyrille",
+        "full_name": "Cyrille Pierre Joseph Jegourel",
+        "email": " cyrille_jegourel@sutd.edu.sg",
+        "hashed_password": '$2b$12$PPlvfQ4YMT8spVfeSnJQ7.jVTvcEc30zt3mKmNpAeKFy5xuQbOx5K',  # pass: pyramid
+        "disabled": False,
+    },
+    "norman": {
+        "username": "norman",
+        "full_name": "Norman Lee Tiong Seng",
+        "email": " norman_lee@sutd.edu.sg",
+        "hashed_password": '$2b$12$aEf7Ak/UVMmhIYjjZAAL7.eV8mHYLzMIx9G.dEJgdNBFBYiFQ0HRe',  # pass: megashield
+        "disabled": False,
+    },
+    "nachamma": {
+        "username": "nachamma",
+        "full_name": "Nachamma Sockalingam",
+        "email": " nachamma@sutd.edu.sg",
+        "hashed_password": '$2b$12$t3z6Cf2A0z3RCNkdbfFOSuIMTgQHeNK30lEV48nnlkFjSKlvVrHtK',  # pass: secretpass
+        "disabled": False,
+    },
+    "charles": {
+        "username": "charles",
+        "full_name": "Lim Thian Yew",
+        "email": " thianyew_lim@mymail.sutd.edu.sg",
+        "hashed_password": '$2b$12$ZLChEImf1DvyKloy1IcPxOaKpKmKgqwrBJaEJpMU9mm6yOXvz2c02',  # pass: xmen
+        "disabled": False,
+    },
+    "ismam": {
+        "username": "ismam",
+        "full_name": "Ismam Al Hoque",
+        "email": " ismam_hoque@sutd.edu.sg",
+        "hashed_password": '$2b$12$OYfF6f0z/P5ebNhO6OyQS.V0FFgzPAaXQAWeevA3X1Zwwq8sc3.9q',  # pass: barelypass
+        "disabled": False,
+    },
+}
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 # app = FastAPI()
 app = FastAPI(root_path='/clara',
@@ -91,55 +119,30 @@ app = FastAPI(root_path='/clara',
               openapi_tags=tags_metadata)
 
 
-# def fake_hash_password(password: str):
-#     return "fakehashed" + password
-#
-#
-# oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-#
-#
-# class User(BaseModel):
-#     username: str
-#     email: Optional[str] = None
-#     full_name: Optional[str] = None
-#     disabled: Optional[bool] = None
-#
-#
-# class UserInDB(User):
-#     hashed_password: str
-#
-#
-# def get_user(db, username: str):
-#     if username in db:
-#         user_dict = db[username]
-#         return UserInDB(**user_dict)
-#
-#
-# def fake_decode_token(token):
-#     # This doesn't provide any security at all
-#     # Check the next version
-#     user = get_user(fake_users_db, token)
-#     return user
-#
-#
-# async def get_current_user(token: str = Depends(oauth2_scheme)):
-#     user = fake_decode_token(token)
-#     if not user:
-#         raise HTTPException(
-#             status_code=status.HTTP_401_UNAUTHORIZED,
-#             detail="Invalid authentication credentials",
-#             headers={"WWW-Authenticate": "Bearer"},
-#         )
-#     return user
-#
-#
-# async def get_current_active_user(current_user: User = Depends(get_current_user)):
-#     if current_user.disabled:
-#         raise HTTPException(status_code=400, detail="Inactive user")
-#     return current_user
-#
-
 # Data models
+
+# Data models for auth
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
+
+
+class User(BaseModel):
+    username: str
+    email: Optional[str] = None
+    full_name: Optional[str] = None
+    disabled: Optional[bool] = None
+
+
+class UserInDB(User):
+    hashed_password: str
+
+
+# Data models for api
 class Submission(BaseModel):
     submission_folder: str = Field(..., description="submission folder path", example="sub_code/year/category/Qn")
     code: str = Field(..., description="The code to be submitted", example="print('hello clara!')")
@@ -171,6 +174,68 @@ class FeedbackModel(BaseModel):
 
 
 # utils
+
+# Utils for auth
+
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+
+
+# can be used to generate hash, not used directly in the project
+def get_password_hash(password):
+    return pwd_context.hash(password)
+
+
+def get_user(db, username: str):
+    if username in db:
+        user_dict = db[username]
+        return UserInDB(**user_dict)
+
+
+def authenticate_user(fake_db, username: str, password: str):
+    user = get_user(fake_db, username)
+    if not user:
+        return False
+    if not verify_password(password, user.hashed_password):
+        return False
+    return user
+
+
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=15)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+        token_data = TokenData(username=username)
+    except JWTError:
+        raise credentials_exception
+    user = get_user(fake_users_db, username=token_data.username)
+    if user is None:
+        raise credentials_exception
+    return user
+
+
+async def get_current_active_user(current_user: User = Depends(get_current_user)):
+    if current_user.disabled:
+        raise HTTPException(status_code=400, detail="Inactive user")
+    return current_user
 
 
 # makes directory for submission and saves the solution
@@ -219,26 +284,30 @@ def reDoc():
     return RedirectResponse('./redoc')
 
 
-# @app.post("/token", tags=["authenticate"])
-# async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-#     user_dict = fake_users_db.get(form_data.username)
-#     if not user_dict:
-#         raise HTTPException(status_code=400, detail="Incorrect username or password")
-#     user = UserInDB(**user_dict)
-#     hashed_password = fake_hash_password(form_data.password)
-#     if not hashed_password == user.hashed_password:
-#         raise HTTPException(status_code=400, detail="Incorrect username or password")
-#
-#     return {"access_token": user.username, "token_type": "bearer"}
-#
-#
-# @app.get("/users/me")
-# async def read_users_me(current_user: User = Depends(get_current_active_user)):
-#     return current_user
+# Path for login and get token
+@app.post("/login", response_model=Token, tags=["login"])
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = authenticate_user(fake_users_db, form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.username}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
 
-# make submission folder and submit the snippet
+
+@app.get("/users/me/", response_model=User, tags=["user"])
+async def read_users_me(current_user: User = Depends(get_current_active_user)):
+    return current_user
+
+
 @app.post('/submit_snippet/', tags=["submit"], status_code=201)
-def submit_snippet(submission: Submission):
+def submit_snippet(submission: Submission, current_user: User = Depends(get_current_active_user)):
     sol = submission.code
     path = os.getcwd() + '/submissions/' + submission.submission_folder
     save_file(path, submission.sid, sol)
@@ -250,7 +319,8 @@ def submit_snippet(submission: Submission):
 @app.post("/submit_compressed_file/", tags=["submit"], status_code=201)
 async def submit_compressed_file(submission_folder: str = Query(..., description="submission folder path",
                                                                 example="sub_code/year/category/Qn"),
-                                 file: UploadFile = File(..., description="The file to be submitted")):
+                                 file: UploadFile = File(..., description="The file to be submitted"),
+                                 current_user: User = Depends(get_current_active_user)):
     path = os.getcwd() + '/submissions/' + submission_folder
     os.makedirs('compressed_files', exist_ok=True)
     with open('compressed_files/' + file.filename, 'wb') as writer:
@@ -263,7 +333,7 @@ async def submit_compressed_file(submission_folder: str = Query(..., description
 
 # define cluster folder, and get filenames for clustering  and pass to clara function
 @app.put('/cluster_files', tags=["cluster"], status_code=202)
-def cluster_files(cluster_metadata: ClusterMetadata):
+def cluster_files(cluster_metadata: ClusterMetadata, current_user: User = Depends(get_current_active_user)):
     cluster_path = os.getcwd() + '/clusters/' + cluster_metadata.submission_folder
     folder_path = os.getcwd() + f"/submissions/{cluster_metadata.submission_folder}/"
     if not os.path.exists(folder_path):
@@ -276,7 +346,7 @@ def cluster_files(cluster_metadata: ClusterMetadata):
 
 # define cluster folder, and get all filenames from the selected folder and pass to clara function
 @app.put('/cluster_folder', tags=["cluster"], status_code=202)
-def cluster_folder(cluster_metadata: ClusterMetadataBase):
+def cluster_folder(cluster_metadata: ClusterMetadataBase, current_user: User = Depends(get_current_active_user)):
     cluster_path = os.getcwd() + '/clusters/' + cluster_metadata.submission_folder
     folder_path = os.getcwd() + f"/submissions/{cluster_metadata.submission_folder}/"
     path = ""
@@ -291,7 +361,7 @@ def cluster_folder(cluster_metadata: ClusterMetadataBase):
 # generates path to cluster folder from submission path, gets all the file_path form the selected folder and pass to the
 # clara function along with the incorrect file generated from the code snippet
 @app.put('/feedback_snippet/', tags=["feedback"])
-def feedback_snippet(feedback_metadata: FeedbackModel):
+def feedback_snippet(feedback_metadata: FeedbackModel, current_user: User = Depends(get_current_active_user)):
     cluster_path = os.getcwd() + '/clusters' + f"/{feedback_metadata.submission_folder}/"
     path = ""
     if not os.path.exists(cluster_path):
@@ -314,7 +384,7 @@ def feedback_snippet(feedback_metadata: FeedbackModel):
 
 # gets all the submission folders
 @app.get('/get_submission_folders/', tags=["index"])
-def get_index():
+def get_index(current_user: User = Depends(get_current_active_user)):
     if os.path.isfile('index.txt'):
         with open('index.txt', 'r') as reader:
             return [s[:-1] for s in reader.readlines()]
@@ -324,7 +394,8 @@ def get_index():
 # gets all the files under a submission folder
 @app.get('/get_submitted_file_names/', tags=["index"])
 def get_submitted_file_names(submission_folder: str = Query(..., description="path to correct submissions",
-                                                            example="sub_code/year/category/Qn")):
+                                                            example="sub_code/year/category/Qn"),
+                             current_user: User = Depends(get_current_active_user)):
     complete_path = os.getcwd() + '/submissions/' + submission_folder
     if os.path.exists(complete_path):
         return os.listdir(complete_path)
