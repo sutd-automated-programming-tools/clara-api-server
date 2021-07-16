@@ -152,8 +152,7 @@ class SubmissionFolder(BaseModel):
     submission_folder: str = Field(..., description="path to correct submissions", example="sub_code/year/category/Qn")
 
 
-class FullPath(BaseModel):
-    submission_folder: str = Field(..., description="path to correct submissions", example="sub_code/year/category/Qn")
+class FullPath(SubmissionFolder):
     sid: str = Field(..., description="The student ID", example="1000749")
 
 
@@ -179,7 +178,6 @@ class FeedbackModel(MetadataBase):
 # utils
 
 # Utils for auth
-
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
@@ -397,10 +395,9 @@ def get_index(current_user: User = Depends(get_current_active_user)):
 
 # gets all the files under a submission folder
 @app.get('/get_submitted_file_names/', tags=["index"])
-def get_submitted_file_names(submission_folder: str = Query(..., description="path to correct submissions",
-                                                            example="sub_code/year/category/Qn"),
+def get_submitted_file_names(folder: SubmissionFolder,
                              current_user: User = Depends(get_current_active_user)):
-    complete_path = os.getcwd() + '/submissions/' + submission_folder
+    complete_path = os.getcwd() + '/submissions/' + folder.submission_folder
     if os.path.exists(complete_path):
         return os.listdir(complete_path)
     return 'path does not exist'
@@ -408,36 +405,33 @@ def get_submitted_file_names(submission_folder: str = Query(..., description="pa
 
 # deletes a submission_folder and all its contents
 @app.post('/delete_submission_folder/', tags=["delete"])
-def delete_submission_folder(submission_folder: str = Query(..., description="path to correct submissions",
-                                                            example="sub_code/year/category/Qn"),
+def delete_submission_folder(folder: SubmissionFolder,
                              current_user: User = Depends(get_current_active_user)):
     if os.path.isfile('index.txt'):
         with open('index.txt', 'r') as reader:
-            arr = [s[:-1] for s in reader.readlines() if submission_folder != s[:-1]]
+            arr = [s[:-1] for s in reader.readlines() if folder.submission_folder != s[:-1]]
         s = ''.join(arr)
         with open('index.txt', 'w') as writer:
             writer.write(s)
-        complete_path = os.getcwd() + '/submissions/' + submission_folder
+        complete_path = os.getcwd() + '/submissions/' + folder.submission_folder
         if os.path.exists(complete_path):
             shutil.rmtree(complete_path)
-            return f'{submission_folder} is deleted'
-    return f'{submission_folder} is not found'
+            return f'{folder.submission_folder} is deleted'
+    return f'{folder.submission_folder} is not found'
 
 
 # deletes a solution_file under a submission_folder
 @app.post('/delete_submission_file/', tags=["delete"])
-def delete_submission_file(submission_folder: str = Query(..., description="path to correct submissions",
-                                                          example="sub_code/year/category/Qn"),
-                           solution_file: str = Query(..., description="name of the file to be deleted",
-                                                      example="1000749.py"),
+def delete_submission_file(path: FullPath,
                            current_user: User = Depends(get_current_active_user)):
-    complete_path = os.getcwd() + '/submissions/' + submission_folder
+    solution_file = path.sid + '.py'
+    complete_path = os.getcwd() + '/submissions/' + path.submission_folder
     if os.path.exists(complete_path):
         if solution_file in os.listdir(complete_path):
             os.remove(complete_path + '/' + solution_file)
             return f'{solution_file} is removed'
         return f'{solution_file} does not exist'
-    return f'{submission_folder} does not exist'
+    return f'{path.submission_folder} does not exist'
 
 # No need to implement this feature
 # @app.put('/feedback_file', tags=["feedback"])
