@@ -148,31 +148,29 @@ class UserInDB(User):
 
 
 # Data models for api
-class Submission(BaseModel):
-    submission_folder: str = Field(..., description="submission folder path", example="sub_code/year/category/Qn")
-    code: str = Field(..., description="The code to be submitted", example="print('hello clara!')")
+class SubmissionFolder(BaseModel):
+    submission_folder: str = Field(..., description="path to correct submissions", example="sub_code/year/category/Qn")
+
+
+class FullPath(BaseModel):
+    submission_folder: str = Field(..., description="path to correct submissions", example="sub_code/year/category/Qn")
     sid: str = Field(..., description="The student ID", example="1000749")
 
 
-class ClusterMetadataBase(BaseModel):
-    submission_folder: str = Field(..., description="submission folder path to choose files from",
-                                   example="sub_code/year/category/Qn")
+class Submission(FullPath):
+    code: str = Field(..., description="The code to be submitted", example="print('hello clara!')")
+
+
+class MetadataBase(SubmissionFolder):
     entryfnc: str = Field(..., description="The name of the entry function", example="computeDeriv")
     args: str = Field(..., description="The argument parameters without spaces", example="[[[4.5]],[[1.0,3.0,5.5]]]")
 
 
-class ClusterMetadata(BaseModel):
-    submission_folder: str = Field(..., description="submission folder path to choose files from",
-                                   example="sub_code/year/category/Qn")
-    entryfnc: str = Field(..., description="The name of the entry function", example="computeDeriv")
-    args: str = Field(..., description="The argument parameters without spaces", example="[[[4.5]],[[1.0,3.0,5.5]]]")
+class ClusterMetadata(MetadataBase):
     filenames: List[str] = Field(..., description="The files to be clustered", example='["c1.py","c2.py"]')
 
 
-class FeedbackModel(BaseModel):
-    submission_folder: str = Field(..., description="path to correct submissions", example="sub_code/year/category/Qn")
-    entryfnc: str = Field(..., description="The name of the entry function", example="computeDeriv")
-    args: str = Field(..., description="The argument parameters without spaces", example="[[[4.5]],[[1.0,3.0,5.5]]]")
+class FeedbackModel(MetadataBase):
     # feedtype: Optional[str] = Field('python', description="python, simple or repair", example='python')
     # ext: Optional[str] = Field('.py', description="File extenstions: .java, .py or .c", example='.py')
     code: str = Field(..., description="The incorrect code for feedback", example='print("hello clara!")')
@@ -332,7 +330,7 @@ async def submit_compressed_file(submission_folder: str = Query(..., description
         writer.write(await file.read())
     with tarfile.open('compressed_files/' + file.filename) as tar:
         tar.extractall(path)
-    os.remove('compressed_files/'+file.filename)
+    os.remove('compressed_files/' + file.filename)
     make_index(path)
     return f'{file.filename} submitted successfully at {submission_folder}'
 
@@ -352,7 +350,7 @@ def cluster_files(cluster_metadata: ClusterMetadata, current_user: User = Depend
 
 # define cluster folder, and get all filenames from the selected folder and pass to clara function
 @app.put('/cluster_folder', tags=["cluster"], status_code=202)
-def cluster_folder(cluster_metadata: ClusterMetadataBase, current_user: User = Depends(get_current_active_user)):
+def cluster_folder(cluster_metadata: MetadataBase, current_user: User = Depends(get_current_active_user)):
     cluster_path = os.getcwd() + '/clusters/' + cluster_metadata.submission_folder
     folder_path = os.getcwd() + f"/submissions/{cluster_metadata.submission_folder}/"
     path = ""
