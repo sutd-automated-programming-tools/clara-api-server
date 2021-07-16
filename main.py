@@ -332,6 +332,7 @@ async def submit_compressed_file(submission_folder: str = Query(..., description
         writer.write(await file.read())
     with tarfile.open('compressed_files/' + file.filename) as tar:
         tar.extractall(path)
+    os.remove('compressed_files/'+file.filename)
     make_index(path)
     return f'{file.filename} submitted successfully at {submission_folder}'
 
@@ -345,7 +346,7 @@ def cluster_files(cluster_metadata: ClusterMetadata, current_user: User = Depend
         return f"{cluster_metadata.submission_folder} does not exit"
     path = ""
     for filename in cluster_metadata.filenames:
-        path += os.getcwd() + f"/{cluster_metadata.submission_folder}/" + filename + " "
+        path += os.getcwd() + f"/submissions/{cluster_metadata.submission_folder}/" + filename + " "
     return cluster(cluster_path, path, cluster_metadata.entryfnc, cluster_metadata.args)
 
 
