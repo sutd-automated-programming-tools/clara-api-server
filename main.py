@@ -17,6 +17,9 @@ SECRET_KEY = "3a420781b6e8b5d7407588cb82aa642f02679988c3e1f4ad95102ac7aab596bb"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
+# Env variables
+DEBUG = False
+
 # Metadata will show up as descriptions along with each tag
 tags_metadata = [
     {
@@ -269,7 +272,10 @@ def cluster(cluster_path, path, entryfnc, args):
               f'--ignoreio 1'.split()
     out = subprocess.run(command, capture_output=True)
     if out.stdout == b'':
-        return out.stderr.decode()
+        if DEBUG:
+            return out.stderr.decode()
+        else:
+            return 'cluster command failed'
     else:
         return out.stdout.decode()
 
@@ -281,7 +287,7 @@ def swagger_doc():
 
 # Another documentation Clara API
 @app.get("/redocs", tags=["docs"])
-def reDoc():
+def redoc():
     return RedirectResponse('./redoc')
 
 
@@ -364,6 +370,7 @@ def cluster_folder(cluster_metadata: MetadataBase, current_user: User = Depends(
 # clara function along with the incorrect file generated from the code snippet
 @app.put('/feedback_snippet/', tags=["feedback"])
 def feedback_snippet(feedback_metadata: FeedbackModel, current_user: User = Depends(get_current_active_user)):
+# def feedback_snippet(feedback_metadata: FeedbackModel):
     cluster_path = os.getcwd() + '/clusters' + f"/{feedback_metadata.submission_folder}/"
     path = ""
     if not os.path.exists(cluster_path):
@@ -379,7 +386,10 @@ def feedback_snippet(feedback_metadata: FeedbackModel, current_user: User = Depe
     # f' --args {feedback_metadata.args} --ignoreio 1 --feedtype {feedback_metadata.feedtype} '.split()
     out = subprocess.run(command, capture_output=True)
     if out.stdout == b'':
-        return out.stderr.decode()
+        if DEBUG:
+            return out.stderr.decode()
+        else:
+            return 'feedback command failed'
     else:
         return out.stdout.decode()
 
