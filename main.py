@@ -190,66 +190,67 @@ class FeedbackModel(MetadataBase):
 # utils
 
 # Utils for auth
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
-
-
-# can be used to generate hash, not used directly in the project
-def get_password_hash(password):
-    return pwd_context.hash(password)
-
-
-def get_user(db, username: str):
-    if username in db:
-        user_dict = db[username]
-        return UserInDB(**user_dict)
-
-
-def authenticate_user(fake_db, username: str, password: str):
-    user = get_user(fake_db, username)
-    if not user:
-        return False
-    if not verify_password(password, user.hashed_password):
-        return False
-    return user
-
-
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
-    to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.utcnow() + expires_delta
-    else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
-
-
-async def get_current_user(token: str = Depends(oauth2_scheme)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
-            raise credentials_exception
-        token_data = TokenData(username=username)
-    except JWTError:
-        raise credentials_exception
-    user = get_user(fake_users_db, username=token_data.username)
-    if user is None:
-        raise credentials_exception
-    return user
-
-
-async def get_current_active_user(current_user: User = Depends(get_current_user)):
-    if current_user.disabled:
-        raise HTTPException(status_code=400, detail="Inactive user")
-    return current_user
-
+# def verify_password(plain_password, hashed_password):
+#     return pwd_context.verify(plain_password, hashed_password)
+#
+#
+# # can be used to generate hash, not used directly in the project
+# def get_password_hash(password):
+#     return pwd_context.hash(password)
+#
+#
+# def get_user(db, username: str):
+#     if username in db:
+#         user_dict = db[username]
+#         return UserInDB(**user_dict)
+#
+#
+# def authenticate_user(fake_db, username: str, password: str):
+#     user = get_user(fake_db, username)
+#     if not user:
+#         return False
+#     if not verify_password(password, user.hashed_password):
+#         return False
+#     return user
+#
+#
+# def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+#     to_encode = data.copy()
+#     if expires_delta:
+#         expire = datetime.utcnow() + expires_delta
+#     else:
+#         expire = datetime.utcnow() + timedelta(minutes=15)
+#     to_encode.update({"exp": expire})
+#     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+#     return encoded_jwt
+#
+#
+# authenticated user codes
+# async def get_current_user(token: str = Depends(oauth2_scheme)):
+#     credentials_exception = HTTPException(
+#         status_code=status.HTTP_401_UNAUTHORIZED,
+#         detail="Could not validate credentials",
+#         headers={"WWW-Authenticate": "Bearer"},
+#     )
+#     try:
+#         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+#         username: str = payload.get("sub")
+#         if username is None:
+#             raise credentials_exception
+#         token_data = TokenData(username=username)
+#     except JWTError:
+#         raise credentials_exception
+#     user = get_user(fake_users_db, username=token_data.username)
+#     if user is None:
+#         raise credentials_exception
+#     return user
+#
+#
+# async def get_current_active_user(current_user: User = Depends(get_current_user)):
+#     if current_user.disabled:
+#         raise HTTPException(status_code=400, detail="Inactive user")
+#     return current_user
+#
 
 # makes directory for submission and saves the solution
 def save_file(path, name, sol):
@@ -301,29 +302,30 @@ def redoc():
 
 
 # Path for login and get token
-@app.post("/login", response_model=Token, tags=["login"])
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = authenticate_user(fake_users_db, form_data.username, form_data.password)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
-    )
-    return {"access_token": access_token, "token_type": "bearer"}
+# @app.post("/login", response_model=Token, tags=["login"])
+# async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+#     user = authenticate_user(fake_users_db, form_data.username, form_data.password)
+#     if not user:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail="Incorrect username or password",
+#             headers={"WWW-Authenticate": "Bearer"},
+#         )
+#     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+#     access_token = create_access_token(
+#         data={"sub": user.username}, expires_delta=access_token_expires
+#     )
+#     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@app.get("/users/me/", response_model=User, tags=["user"])
-async def read_users_me(current_user: User = Depends(get_current_active_user)):
-    return current_user
+# @app.get("/users/me/", response_model=User, tags=["user"])
+# async def read_users_me(current_user: User = Depends(get_current_active_user)):
+#     return current_user
 
 
 @app.post('/submit_snippet/', tags=["submit"], status_code=201)
-def submit_snippet(submission: Submission, current_user: User = Depends(get_current_active_user)):
+# def submit_snippet(submission: Submission, current_user: User = Depends(get_current_active_user)):
+def submit_snippet(submission: Submission):
     sol = submission.code
     path = os.getcwd() + '/submissions/' + submission.submission_folder
     save_file(path, submission.sid, sol)
@@ -333,10 +335,13 @@ def submit_snippet(submission: Submission, current_user: User = Depends(get_curr
 
 # make submission folder, read and decode the file and submit it
 @app.post("/submit_compressed_file/", tags=["submit"], status_code=201)
+# async def submit_compressed_file(submission_folder: str = Query(..., description="submission folder path",
+#                                                                 example="sub_code/year/category/Qn"),
+#                                  file: UploadFile = File(..., description="The file to be submitted"),
+#                                  current_user: User = Depends(get_current_active_user)):
 async def submit_compressed_file(submission_folder: str = Query(..., description="submission folder path",
                                                                 example="sub_code/year/category/Qn"),
-                                 file: UploadFile = File(..., description="The file to be submitted"),
-                                 current_user: User = Depends(get_current_active_user)):
+                                 file: UploadFile = File(..., description="The file to be submitted")):
     path = os.getcwd() + '/submissions/' + submission_folder
     os.makedirs('compressed_files', exist_ok=True)
     with open('compressed_files/' + file.filename, 'wb') as writer:
@@ -350,7 +355,8 @@ async def submit_compressed_file(submission_folder: str = Query(..., description
 
 # define cluster folder, and get filenames for clustering  and pass to clara function
 @app.put('/cluster_files', tags=["cluster"], status_code=202)
-def cluster_files(cluster_metadata: ClusterMetadata, current_user: User = Depends(get_current_active_user)):
+# def cluster_files(cluster_metadata: ClusterMetadata, current_user: User = Depends(get_current_active_user)):
+def cluster_files(cluster_metadata: ClusterMetadata):
     cluster_path = os.getcwd() + '/clusters/' + cluster_metadata.submission_folder
     folder_path = os.getcwd() + f"/submissions/{cluster_metadata.submission_folder}/"
     if not os.path.exists(folder_path):
@@ -363,7 +369,8 @@ def cluster_files(cluster_metadata: ClusterMetadata, current_user: User = Depend
 
 # define cluster folder, and get all filenames from the selected folder and pass to clara function
 @app.put('/cluster_folder', tags=["cluster"], status_code=202)
-def cluster_folder(cluster_metadata: MetadataBase, current_user: User = Depends(get_current_active_user)):
+# def cluster_folder(cluster_metadata: MetadataBase, current_user: User = Depends(get_current_active_user)):
+def cluster_folder(cluster_metadata: MetadataBase):
     cluster_path = os.getcwd() + '/clusters/' + cluster_metadata.submission_folder
     folder_path = os.getcwd() + f"/submissions/{cluster_metadata.submission_folder}/"
     path = ""
@@ -378,8 +385,8 @@ def cluster_folder(cluster_metadata: MetadataBase, current_user: User = Depends(
 # generates path to cluster folder from submission path, gets all the file_path form the selected folder and pass to the
 # clara function along with the incorrect file generated from the code snippet
 @app.put('/feedback_snippet/', tags=["feedback"])
-def feedback_snippet(feedback_metadata: FeedbackModel, current_user: User = Depends(get_current_active_user)):
-    # def feedback_snippet(feedback_metadata: FeedbackModel):
+# def feedback_snippet(feedback_metadata: FeedbackModel, current_user: User = Depends(get_current_active_user)):
+def feedback_snippet(feedback_metadata: FeedbackModel):
     cluster_path = os.getcwd() + '/clusters' + f"/{feedback_metadata.submission_folder}/"
     path = ""
     if not os.path.exists(cluster_path):
@@ -405,7 +412,8 @@ def feedback_snippet(feedback_metadata: FeedbackModel, current_user: User = Depe
 
 # gets all the submission folders
 @app.get('/get_submission_folders/', tags=["index"])
-def get_index(current_user: User = Depends(get_current_active_user)):
+# def get_index(current_user: User = Depends(get_current_active_user)):
+def get_index():
     if os.path.isfile('index.txt'):
         with open('index.txt', 'r') as reader:
             return [s[:-1] for s in reader.readlines()]
@@ -414,8 +422,8 @@ def get_index(current_user: User = Depends(get_current_active_user)):
 
 # gets all the files under a submission folder
 @app.get('/get_submitted_file_names/', tags=["index"])
-def get_submitted_file_names(folder: SubmissionFolder,
-                             current_user: User = Depends(get_current_active_user)):
+# def get_submitted_file_names(folder: SubmissionFolder,current_user: User = Depends(get_current_active_user)):
+def get_submitted_file_names(folder: SubmissionFolder):
     complete_path = os.getcwd() + '/submissions/' + folder.submission_folder
     if os.path.exists(complete_path):
         return os.listdir(complete_path)
@@ -424,8 +432,8 @@ def get_submitted_file_names(folder: SubmissionFolder,
 
 # deletes a submission_folder and all its contents
 @app.post('/delete_submission_folder/', tags=["delete"])
-def delete_submission_folder(folder: SubmissionFolder,
-                             current_user: User = Depends(get_current_active_user)):
+# def delete_submission_folder(folder: SubmissionFolder,current_user: User = Depends(get_current_active_user)):
+def delete_submission_folder(folder: SubmissionFolder):
     if os.path.isfile('index.txt'):
         with open('index.txt', 'r') as reader:
             arr = [s[:-1] for s in reader.readlines() if folder.submission_folder != s[:-1]]
@@ -441,8 +449,8 @@ def delete_submission_folder(folder: SubmissionFolder,
 
 # deletes a solution_file under a submission_folder
 @app.post('/delete_submission_file/', tags=["delete"])
-def delete_submission_file(path: FullPath,
-                           current_user: User = Depends(get_current_active_user)):
+# def delete_submission_file(path: FullPath,current_user: User = Depends(get_current_active_user)):
+def delete_submission_file(path: FullPath):
     solution_file = path.sid + '.py'
     complete_path = os.getcwd() + '/submissions/' + path.submission_folder
     if os.path.exists(complete_path):
