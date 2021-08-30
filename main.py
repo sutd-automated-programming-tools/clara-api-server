@@ -10,6 +10,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel, Field
+from fastapi.middleware.cors import CORSMiddleware
 
 # to get a string like this run:
 # openssl rand -hex 32
@@ -125,6 +126,14 @@ app = FastAPI(root_path='/clara',
               title="Clara API Server",
               description="An API for connecting with a  server which executes Clara",
               openapi_tags=tags_metadata)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # Data models
@@ -370,7 +379,7 @@ def cluster_folder(cluster_metadata: MetadataBase, current_user: User = Depends(
 # clara function along with the incorrect file generated from the code snippet
 @app.put('/feedback_snippet/', tags=["feedback"])
 def feedback_snippet(feedback_metadata: FeedbackModel, current_user: User = Depends(get_current_active_user)):
-# def feedback_snippet(feedback_metadata: FeedbackModel):
+    # def feedback_snippet(feedback_metadata: FeedbackModel):
     cluster_path = os.getcwd() + '/clusters' + f"/{feedback_metadata.submission_folder}/"
     path = ""
     if not os.path.exists(cluster_path):
