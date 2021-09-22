@@ -346,7 +346,14 @@ async def submit_compressed_file(submission_folder: str = Query(..., description
     os.makedirs('compressed_files', exist_ok=True)
     with open('compressed_files/' + file.filename, 'wb') as writer:
         writer.write(await file.read())
+    if writer.closed:
+        print(file.filename+' is closed')
+    if os.path.isfile('compressed_files/' + file.filename):
+        print(file.filename+' is file')
+    if os.path.exists('compressed_files/' + file.filename):
+        print(file.filename+' exists')
     with tarfile.open('compressed_files/' + file.filename) as tar:
+        print('hotpotato')
         tar.extractall(path)
     os.remove('compressed_files/' + file.filename)
     make_index(path)
@@ -423,8 +430,8 @@ def get_index():
 # gets all the files under a submission folder
 @app.get('/get_submitted_file_names/', tags=["index"])
 # def get_submitted_file_names(folder: SubmissionFolder,current_user: User = Depends(get_current_active_user)):
-def get_submitted_file_names(folder: SubmissionFolder):
-    complete_path = os.getcwd() + '/submissions/' + folder.submission_folder
+def get_submitted_file_names(submission_folder: str = Query(..., description="path to correct submissions", example="sub_code/year/category/Qn")):
+    complete_path = os.getcwd() + '/submissions/' + submission_folder
     if os.path.exists(complete_path):
         return os.listdir(complete_path)
     return 'path does not exist'
@@ -437,7 +444,8 @@ def delete_submission_folder(folder: SubmissionFolder):
     if os.path.isfile('index.txt'):
         with open('index.txt', 'r') as reader:
             arr = [s[:-1] for s in reader.readlines() if folder.submission_folder != s[:-1]]
-        s = ''.join(arr)
+            print(arr)
+        s = '\n'.join(arr)
         with open('index.txt', 'w') as writer:
             writer.write(s)
         complete_path = os.getcwd() + '/submissions/' + folder.submission_folder
