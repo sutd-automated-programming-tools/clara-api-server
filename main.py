@@ -346,14 +346,7 @@ async def submit_compressed_file(submission_folder: str = Query(..., description
     os.makedirs('compressed_files', exist_ok=True)
     with open('compressed_files/' + file.filename, 'wb') as writer:
         writer.write(await file.read())
-    if writer.closed:
-        print(file.filename+' is closed')
-    if os.path.isfile('compressed_files/' + file.filename):
-        print(file.filename+' is file')
-    if os.path.exists('compressed_files/' + file.filename):
-        print(file.filename+' exists')
     with tarfile.open('compressed_files/' + file.filename) as tar:
-        print('hotpotato')
         tar.extractall(path)
     os.remove('compressed_files/' + file.filename)
     make_index(path)
@@ -443,8 +436,7 @@ def get_submitted_file_names(submission_folder: str = Query(..., description="pa
 def delete_submission_folder(folder: SubmissionFolder):
     if os.path.isfile('index.txt'):
         with open('index.txt', 'r') as reader:
-            arr = [s[:-1] for s in reader.readlines() if folder.submission_folder != s[:-1]]
-            print(arr)
+            arr = [s for s in reader.readlines() if folder.submission_folder != s[:-1]]
         s = '\n'.join(arr)
         with open('index.txt', 'w') as writer:
             writer.write(s)
