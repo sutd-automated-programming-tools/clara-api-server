@@ -423,14 +423,15 @@ def get_index():
 # gets all the files under a submission folder
 @app.get('/get_submitted_file_names/', tags=["index"])
 # def get_submitted_file_names(folder: SubmissionFolder,current_user: User = Depends(get_current_active_user)):
-def get_submitted_file_names(submission_folder: str = Query(..., description="path to correct submissions", example="sub_code/year/category/Qn")):
+def get_submitted_file_names(submission_folder: str = Query(..., description="path to correct submissions",
+                                                            example="sub_code/year/category/Qn")):
     complete_path = os.getcwd() + '/submissions/' + submission_folder
     if os.path.exists(complete_path):
         return os.listdir(complete_path)
     return 'path does not exist'
 
 
-# deletes a submission_folder and all its contents
+# deletes a submission_folder and all its contents and corresponding cluster folder as well
 @app.post('/delete_submission_folder/', tags=["delete"])
 # def delete_submission_folder(folder: SubmissionFolder,current_user: User = Depends(get_current_active_user)):
 def delete_submission_folder(folder: SubmissionFolder):
@@ -443,19 +444,28 @@ def delete_submission_folder(folder: SubmissionFolder):
         complete_path = os.getcwd() + '/submissions/' + folder.submission_folder
         if os.path.exists(complete_path):
             shutil.rmtree(complete_path)
+            cluster_path = os.getcwd() + '/clusters/' + folder.submission_folder
+            if os.path.exists(cluster_path):
+                shutil.rmtree(cluster_path)
             return f'{folder.submission_folder} is deleted'
     return f'{folder.submission_folder} is not found'
 
 
-# deletes a solution_file under a submission_folder
+# deletes a solution_file under a submission_folder and corresponding cluster files
 @app.post('/delete_submission_file/', tags=["delete"])
 # def delete_submission_file(path: FullPath,current_user: User = Depends(get_current_active_user)):
 def delete_submission_file(path: FullPath):
     solution_file = path.sid + '.py'
+    cluster_json_file = path.sid + '-exprs.json'
     complete_path = os.getcwd() + '/submissions/' + path.submission_folder
     if os.path.exists(complete_path):
         if solution_file in os.listdir(complete_path):
             os.remove(complete_path + '/' + solution_file)
+            cluster_path = os.getcwd() + '/clusters/' + path.submission_folder
+            if solution_file in os.listdir(cluster_path):
+                os.remove(cluster_path + '/' + solution_file)
+            if cluster_json_file in os.listdir(cluster_path):
+                os.remove(cluster_path + '/' + cluster_json_file)
             return f'{solution_file} is removed'
         return f'{solution_file} does not exist'
     return f'{path.submission_folder} does not exist'
