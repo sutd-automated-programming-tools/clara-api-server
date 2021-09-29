@@ -379,6 +379,7 @@ def cluster_folder(cluster_metadata: MetadataBase):
             path += folder_path + filename + " "
     else:
         return f"{cluster_metadata.submission_folder} does not exit"
+    print(path)
     return cluster(cluster_path, path, cluster_metadata.entryfnc, cluster_metadata.args)
 
 
