@@ -11,7 +11,7 @@ sudo apt-get install -y aptitude
 echo 'install lpsolve'
 sudo aptitude install -y lp-solve liblpsolve55-dev
 echo 'install pip requirements'
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 echo 'execute make'
 make
 echo 'launch traefik proxy server'
