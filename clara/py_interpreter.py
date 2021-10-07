@@ -5,14 +5,12 @@ Python interpreter
 # Python imports
 import math
 import string
-
 from copy import deepcopy
 
+from .interpreter import Interpreter, addlanginter, RuntimeErr, UndefValue
+from .model import Var, Op
 # Feedback lib imports
 from .py_parser import PyParser
-
-from .interpreter import Interpreter, addlanginter, RuntimeErr, UndefValue
-from .model import Var, Op, VAR_IN, VAR_OUT, VAR_RET, prime
 
 
 def eargs(fun):
@@ -30,10 +28,11 @@ def eargs(fun):
 
     return wrap
 
+
 DEFAULT = object()
 
-class PyInterpreter(Interpreter):
 
+class PyInterpreter(Interpreter):
     BINARY_OPS = set()
     UNARY_OPS = set()
     DEFAULT_RETURN = None
@@ -41,7 +40,7 @@ class PyInterpreter(Interpreter):
     def execute_Const(self, c, mem):
 
         c = c.value
-        
+
         # Undef
         if c == '?':
             return UndefValue()
@@ -66,7 +65,7 @@ class PyInterpreter(Interpreter):
                 return complex(c)
             except ValueError:
                 pass
-        
+
         # String
         if len(c) >= 2 and c[0] == c[-1] == '"':
             return c[1:-1]
@@ -137,6 +136,13 @@ class PyInterpreter(Interpreter):
         return set(s)
 
     @eargs
+    def execute_split(self, s):
+        return s.split()
+    @eargs
+    def execute_splitlines(self, s):
+        return s.splitlines()
+
+    @eargs
     def execute_set(self, *s):
         return set(*s)
 
@@ -171,13 +177,13 @@ class PyInterpreter(Interpreter):
         name = g.args[1].value
 
         if isinstance(g.args[0], Var) \
-           and g.args[0].name in PyParser.MODULE_NAMES:
+                and g.args[0].name in PyParser.MODULE_NAMES:
             mname = g.args[0].name
             if mname == 'string':
                 return getattr(string, name)
             elif name == 'math':
                 return getattr(math, name)
-            
+
         return getattr(self.execute(g.args[0], mem), name)
 
     @eargs
@@ -203,7 +209,7 @@ class PyInterpreter(Interpreter):
     @eargs
     def execute_math_ceil(self, *a):
         return math.ceil(*a)
-    
+
     @eargs
     def execute_sum(self, *x):
         return sum(*x)
@@ -582,7 +588,7 @@ class PyInterpreter(Interpreter):
             return vars
 
         assert False, 'unsupported list of names'
-        
+
     def convert(self, v, t):
         return v
 
