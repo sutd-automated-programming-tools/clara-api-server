@@ -99,6 +99,9 @@ class PyParser(Parser):
     def visit_Str(self, node):
         return Const('"{}"'.format(node.s), line=node.lineno)
 
+    def visit_NameConstant(self, node):
+        return Const(str(node.value), line=node.lineno)
+
     def visit_List(self, node):
         elts = list(map(self.visit_expr, node.elts))
         return Op('ListInit', *elts, line=node.lineno)
