@@ -28,7 +28,7 @@ class PyParser(Parser):
     UNSUPPORTED_BUILTIN_FNCS = ['eval', 'iter']
     CONSTS = ['True', 'False', 'None', 'list', 'tuple', 'int', 'dict',
               'float', 'bool']
-    MODULE_NAMES = ['math', 'string', 'm']
+    MODULE_NAMES = ['math', 'string', 'm','copy']
 
     NOTOP = 'Not'
     OROP = 'Or'
@@ -57,10 +57,8 @@ class PyParser(Parser):
         '''
         funcdefs = list([x for x in node.body if isinstance(x, ast.FunctionDef)])
         for func in funcdefs:
-
             args = [(arg.arg, '*') for arg in func.args.args]
             self.addfnc(func.name, args, '*')
-            
             for arg, t in args:
                 self.addtype(arg, t)
 

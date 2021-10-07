@@ -6,6 +6,7 @@ Python interpreter
 import math
 import string
 from copy import deepcopy
+import copy
 
 from .interpreter import Interpreter, addlanginter, RuntimeErr, UndefValue
 from .model import Var, Op
@@ -175,7 +176,6 @@ class PyInterpreter(Interpreter):
 
     def execute_GetAttr(self, g, mem):
         name = g.args[1].value
-
         if isinstance(g.args[0], Var) \
                 and g.args[0].name in PyParser.MODULE_NAMES:
             mname = g.args[0].name
@@ -205,6 +205,10 @@ class PyInterpreter(Interpreter):
     @eargs
     def execute_math_pow(self, *a):
         return math.pow(*a)
+    @eargs
+    def execute_copy_copy(self, a):
+        return copy.copy(a)
+
 
     @eargs
     def execute_math_ceil(self, *a):
