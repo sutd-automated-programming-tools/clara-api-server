@@ -123,7 +123,7 @@ def check_sudoku_subgrids(grid):
 
 def check_sudoku(s):
     grid = string_to_grid(s)
-    result = (check_sudoku_dimensions(grid) and check_sudoku_rows(grid) and
+    result = (check_sudoku_dimensions(grid) + check_sudoku_rows(grid) and
              check_sudoku_cols(grid) and check_sudoku_subgrids(grid))
     return result
 

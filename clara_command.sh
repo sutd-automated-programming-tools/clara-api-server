@@ -19,8 +19,12 @@ fi
 
 #. sudoku_part_d.sh
 
-#mkdir "examples/sudoku/part-e" "clusters/sudoku/part-e" "incorrect/sudoku/part-e"
+#mkdir -p "clusters/sudoku/part-a" "clusters/sudoku/part-b" "clusters/sudoku/part-c" "clusters/sudoku/part-d" "clusters/sudoku/part-e" "clusters/sudoku/part-f"
 
 #part e cluster and feedback
 
-. sudoku_part_e.sh
+#. sudoku_part_e.sh
+
+#part f cluster and feedback
+
+. sudoku_part_f.sh
