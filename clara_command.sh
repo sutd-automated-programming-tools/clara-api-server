@@ -5,25 +5,25 @@ fi
 
 # part-a cluster and feedback
 
-#. sudoku_part_a.sh
+. sudoku_part_a.sh
 
 #part b cluster and feedback
 
-#. sudoku_part_b.sh
+. sudoku_part_b.sh
 
 #part c cluster and feedback
 
-#. sudoku_part_c.sh
+. sudoku_part_c.sh
 
 #part d cluster and feedback
 
-#. sudoku_part_d.sh
+. sudoku_part_d.sh
 
 #mkdir -p "clusters/sudoku/part-a" "clusters/sudoku/part-b" "clusters/sudoku/part-c" "clusters/sudoku/part-d" "clusters/sudoku/part-e" "clusters/sudoku/part-f"
 
 #part e cluster and feedback
 
-#. sudoku_part_e.sh
+. sudoku_part_e.sh
 
 #part f cluster and feedback
 
