@@ -28,5 +28,4 @@ def check_sudoku_dimensions(grid):
     return result
 
 
-
 print(check_sudoku_dimensions(string_to_grid(test_case_1)))
