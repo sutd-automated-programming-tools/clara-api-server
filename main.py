@@ -282,7 +282,7 @@ def cluster(cluster_path, path, entryfnc, args):
               f'--ignoreio 1'
     if DEBUG:
         command += ' --verbose 1'
-    command = command.split(' ')
+    command = command.split('')
     out = subprocess.run(command, capture_output=True)
     if out.stdout == b'':
         if DEBUG:
@@ -401,13 +401,11 @@ def feedback_snippet(feedback_metadata: FeedbackModel):
     # with open(f'incorrect/incorrect{feedback_metadata.ext}', 'w') as writer:
     with open(f'incorrect/incorrect.py', 'w') as writer:
         writer.write(feedback_metadata.code)
-    print(feedback_metadata.args)
     command = f'clara feedback {path} incorrect/incorrect.py --entryfnc {feedback_metadata.entryfnc}' \
               f' --args {feedback_metadata.args} --ignoreio 1 --feedtype python'
     if DEBUG:
         command += ' --verbose 1'
-    command = command.split(' ')
-    print(command)
+    command = command.split()
     # f' --args {feedback_metadata.args} --ignoreio 1 --feedtype {feedback_metadata.feedtype} '.split()
     out = subprocess.run(command, capture_output=True)
     if out.stdout == b'':
