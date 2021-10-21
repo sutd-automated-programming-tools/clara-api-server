@@ -20,6 +20,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # Env variables
 DEBUG = True
+VERBOSE= False
 
 # Metadata will show up as descriptions along with each tag
 tags_metadata = [
@@ -280,9 +281,9 @@ def cluster(cluster_path, path, entryfnc, args):
     os.makedirs(cluster_path, exist_ok=True)
     command = f'clara cluster {path} --clusterdir {cluster_path} --entryfnc {entryfnc} --args {args} ' \
               f'--ignoreio 1'
-    if DEBUG:
+    if VERBOSE:
         command += ' --verbose 1'
-    command = command.split('')
+    command = command.split()
     out = subprocess.run(command, capture_output=True)
     if out.stdout == b'':
         if DEBUG:
@@ -403,8 +404,10 @@ def feedback_snippet(feedback_metadata: FeedbackModel):
         writer.write(feedback_metadata.code)
     command = f'clara feedback {path} incorrect/incorrect.py --entryfnc {feedback_metadata.entryfnc}' \
               f' --args {feedback_metadata.args} --ignoreio 1 --feedtype python'
-    if DEBUG:
-        command += ' --verbose 1'
+    if VERBOSE:
+        # command += ' --verbose 1'
+        pass
+    print(command)
     command = command.split()
     # f' --args {feedback_metadata.args} --ignoreio 1 --feedtype {feedback_metadata.feedtype} '.split()
     out = subprocess.run(command, capture_output=True)
