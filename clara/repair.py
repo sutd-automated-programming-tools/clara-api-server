@@ -219,7 +219,8 @@ class Repair(object):
                 repobj.expr1 = self.E1[loc1][var1]
             else:
                 repobj.expr1 = self.ER[loc1][var1][idx][0]
-                repobj.expr1_orig = self.ER[loc1][var1][idx][1]
+                #turn off filename sharing in feedback by commenting the following line
+                #repobj.expr1_orig = self.ER[loc1][var1][idx][1]
             ress.append(repobj)
         res = (res[0], ress)
             
