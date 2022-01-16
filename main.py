@@ -11,7 +11,6 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel, Field
 from fastapi.middleware.cors import CORSMiddleware
-import feedbackParser
 
 # to get a string like this run:
 # openssl rand -hex 32
@@ -20,8 +19,8 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # Env variables
-DEBUG = False
-VERBOSE = False
+DEBUG = True
+VERBOSE= False
 
 # Metadata will show up as descriptions along with each tag
 tags_metadata = [
@@ -408,6 +407,7 @@ def feedback_snippet(feedback_metadata: FeedbackModel):
     if VERBOSE:
         # command += ' --verbose 1'
         pass
+    print(command)
     command = command.split()
     # f' --args {feedback_metadata.args} --ignoreio 1 --feedtype {feedback_metadata.feedtype} '.split()
     out = subprocess.run(command, capture_output=True)
@@ -417,9 +417,7 @@ def feedback_snippet(feedback_metadata: FeedbackModel):
         else:
             return 'feedback command failed'
     else:
-        string = out.stdout.decode()
-        string = feedbackParser.postparse(string)
-        return string
+        return out.stdout.decode()
 
 
 # gets all the submission folders

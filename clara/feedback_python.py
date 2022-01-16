@@ -113,24 +113,21 @@ class PythonFeedback(object):
 
                 # '*' means adding a new variable (and also statement)
                 if var2 == '*':
-                    self.add("Add assignment \n'%s' %s (cost=%s)\n",
+                    self.add("Add assignment '%s' %s (cost=%s)",
                              str(gen.assignmentStatement('$new_%s' % (var1,), expr1)), locdesc, cost)
                     continue
 
                 # Output original and new (rewriten) expression for var2
-
-                # print('expr1',expr1)
-                # print('var2',str(var2))
+                
                 if var2.startswith('iter#'):
                     pyexpr1 = gen.pythonExpression(expr1, True)[0]
                     pyexpr2 = gen.pythonExpression(expr2, True)[0]
-
-                    self.add("Change iterated expression of for loop \n'%s' to \n'%s' %s (cost=%s)\n", str(pyexpr2), str(pyexpr1), locdesc, cost)
+                    self.add("Change iterated expression of for loop '%s' to '%s' %s (cost=%s)", str(pyexpr2), str(pyexpr1), locdesc, cost)
                 elif str(var2) == str(expr2):
-                    self.add("Add a statement \n'%s' %s (cost=%s)\n", str(gen.assignmentStatement(var2, expr1)), locdesc, cost)
+                    self.add("Add a statement '%s' %s (cost=%s)", str(gen.assignmentStatement(var2, expr1)), locdesc, cost)
                 else:
                     self.add(
-                        "Change \n'%s'\nto\n'%s'\n%s (cost=%s)\n",
+                        "Change '%s' to '%s' %s (cost=%s)",
                         str(gen.assignmentStatement(var2, expr2)), str(gen.assignmentStatement(var2, expr1)), locdesc, cost)
                 
                 
@@ -421,7 +418,7 @@ class PyAssignments(PyStatement):
         self.assignments = assignments
         
     def __repr__(self):
-        return '\n'.join([str(assignment) for assignment in self.assignments])
+        return '; '.join([str(assignment) for assignment in self.assignments])
     
 class PyVariable(PyLValue):
     def __init__(self, name):
