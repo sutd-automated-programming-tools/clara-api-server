@@ -19,7 +19,7 @@ class NotSupported(Exception):
         self.line = line
         super(NotSupported, self).__init__(msg)
 
-
+        
 class ParseError(Exception):
     '''
     Exception denoting that the code cannot be parsed because syntax errors.
@@ -36,7 +36,7 @@ class Parser(object):
 
     def __init__(self, optifs=True, postprocess=True, nobcs=False,
                  slice=False):
-
+        
         self.prog = Program()
 
         self.fncs = {}
@@ -119,7 +119,7 @@ class Parser(object):
             m = {}
             exprs = []
             for i, (var, expr) in enumerate(fnc.exprs(loc)):
-
+                
                 for v1, v2 in list(m.items()):
                     expr = expr.replace(v1, Var(v2))
 
@@ -154,10 +154,10 @@ class Parser(object):
             # Remember "real" vars and replace temps
             for var, expr in fnc.exprs(loc):
 
-                # expr.statement = True
-
+                #expr.statement = True
+                
                 expr.prime(primed)
-
+                
                 for v, e in list(m.items()):
                     expr = expr.replace(v, e)
 
@@ -172,9 +172,9 @@ class Parser(object):
                 else:
                     if var == VAR_RET:
                         lastret = len(exprs)
-
+                        
                     exprs.append((var, expr))
-
+                    
                     if var != VAR_RET:
                         primed.add(var)
 
@@ -196,7 +196,7 @@ class Parser(object):
 
                     if i == lastret:
                         nexprs.append((var, retexpr))
-
+                        
                 else:
                     if retcond is True:
                         continue
@@ -232,10 +232,10 @@ class Parser(object):
                 return cond[0]
             else:
                 return Op(self.OROP, cond[0], cond[1])
-
+            
         elif isinstance(expr, Var) and expr.name == VAR_RET:
             return None
-
+        
         else:
             return True
 
@@ -264,8 +264,7 @@ class Parser(object):
         meth = getattr(self, 'visit_%s' % (name,), None)
         if meth is None:
             raise NotSupported("Unimplemented visitor: '%s'%s" % (name,
-                                                                  " (%s)" % node.value if hasattr(node,
-                                                                                                  "value") else ""))
+                               " (%s)" % node.value if hasattr(node, "value") else ""))
 
         # Call visitor method
         return meth(node)
@@ -293,6 +292,7 @@ class Parser(object):
             else:
                 self.addwarn("Expression expected")
             res = Const('?')
+
         return res
 
     def visit_if(self, node, cond, true, false):
@@ -306,7 +306,7 @@ class Parser(object):
         if isinstance(condexpr, list):
             condexpr = self.expr_list_and(condexpr)
         self.addexpr(VAR_COND, condexpr)
-
+        
         # Add true loc
         trueline = self.getline(true) or self.getline(node)
         trueloc = self.addloc('inside the if-branch starting at line %d' % (
@@ -395,7 +395,7 @@ class Parser(object):
 
         if len(exprs) == 0:
             return None
-
+            
         else:
             newexpr = exprs[0]
             for expr in exprs[1:]:
@@ -403,6 +403,7 @@ class Parser(object):
             return newexpr
 
     def visit_loop(self, node, init, cond, next, body, do, name, prebody=None):
+        
         # Visit init stmts
         if init:
             self.visit(init)
@@ -415,7 +416,7 @@ class Parser(object):
             condexpr = self.visit_expr(cond, allowlist=True)
             if isinstance(condexpr, list):
                 condexpr = self.expr_list_and(condexpr)
-
+                
         if not condexpr:
             condexpr = Const('1')
         condloc = self.addloc("the condition of the '%s' loop at line %s" % (
@@ -496,7 +497,7 @@ class Parser(object):
         if not loc:
             loc = self.loc
         self.fnc.rmlastexprs(loc, num)
-
+    
     def addtrans(self, loc1, cond, loc2):
         assert (self.fnc), 'No active fnc!'
         self.fnc.addtrans(loc1, cond, loc2)
@@ -530,14 +531,14 @@ class Parser(object):
             parser.prog.slice()
         return parser.prog
 
-
+    
 PARSERS = {}
 
 
 def addlangparser(lang, parser):
     PARSERS[lang] = parser
 
-
+    
 def getlangparser(lang):
     if lang in PARSERS:
         return PARSERS[lang]

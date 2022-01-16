@@ -13,6 +13,7 @@ from .parser import Parser, ParseError, addlangparser, NotSupported, ParseError
 
 
 class PyParser(Parser):
+
     # Supported methods with side effects.
     # These are allowed as standalone expressions.
     # During parsing, we currently can't check for types,
@@ -27,7 +28,7 @@ class PyParser(Parser):
     UNSUPPORTED_BUILTIN_FNCS = ['eval', 'iter']
     CONSTS = ['True', 'False', 'None', 'list', 'tuple', 'int', 'dict',
               'float', 'bool']
-    MODULE_NAMES = ['math', 'string', 'm', 'copy']
+    MODULE_NAMES = ['math', 'string', 'm','copy']
 
     NOTOP = 'Not'
     OROP = 'Or'
@@ -37,7 +38,7 @@ class PyParser(Parser):
 
     def __init__(self, *args, **kwargs):
         super(PyParser, self).__init__(*args, **kwargs)
-
+        
         self.hiddenvarcnt = 0
 
     def parse(self, code):
@@ -47,6 +48,7 @@ class PyParser(Parser):
             pyast = ast.parse(code, mode='exec')
         except (SyntaxError, IndentationError) as e:
             raise ParseError(str(e))
+        
         self.visit(pyast)
 
     def visit_Module(self, node):
@@ -62,6 +64,7 @@ class PyParser(Parser):
 
             self.addloc(
                 desc="around the beginning of function '%s'" % func.name)
+                
             for b in func.body:
                 self.visit(b)
 
@@ -126,7 +129,7 @@ class PyParser(Parser):
         if node.id in self.CONSTS and not self.hasvar(node.id):
             return Const(node.id)
         if (node.id not in self.MODULE_NAMES):
-            # and not self.isfncname(node.id)):
+            #and not self.isfncname(node.id)):
             self.addtype(node.id, '*')
         return Var(node.id)
 
@@ -143,14 +146,14 @@ class PyParser(Parser):
             if isinstance(node.value.func, ast.Name):
                 self.warns.append('Ignored call to {} at line {}'.format(
                     node.value.func.id, node.lineno))
-
+                
             elif isinstance(node.value.func, ast.Attribute):
                 if node.value.func.attr in self.ATTR_FNCS:
                     call = self.visit_expr(node.value)
-
+                    
                     if isinstance(call, Op) and call.name == 'ignore_none':
                         call = call.args[0]
-
+                        
                     if isinstance(node.value.func.value, ast.Subscript):
                         var = self.visit_expr(node.value.func.value.value)
                         index = self.visit_expr(node.value.func.value.slice)
@@ -161,7 +164,7 @@ class PyParser(Parser):
                         else:
                             raise NotSupported("Non-name element assignment",
                                                line=node.lineno)
-
+                        
                     elif isinstance(node.value.func.value, ast.Name):
                         var = self.visit(node.value.func.value)
                         if isinstance(var, Var):
@@ -171,7 +174,7 @@ class PyParser(Parser):
                         else:
                             raise NotSupported("Non-name call",
                                                line=node.lineno)
-
+                        
                     else:
                         raise NotSupported(
                             'Call to {}'.format(
@@ -296,7 +299,7 @@ class PyParser(Parser):
                 if isinstance(target.args[0], Var):
                     if len(target.args) != 2:
                         raise NotSupported('Delete target with %d args' % (
-                            len(target.args, )))
+                            len(target.args,)))
                     delexpr = Op('Delete', *target.args, line=node.lineno)
                     self.addexpr(target.args[0].name, delexpr)
                 else:
@@ -307,13 +310,15 @@ class PyParser(Parser):
                 raise NotSupported('Delete target op: %s' % (target.name,))
         else:
             raise NotSupported('Delete target: %s' % (target.__class__,))
-
+    
     def visit_Assign(self, node):
         if len(node.targets) != 1:
             raise NotSupported('Only single assignments allowed')
+        
         target = node.targets[0]
 
         right = self.visit_expr(node.value)
+
         # Assignment to a variable
         if isinstance(target, ast.Name):
             self.addtype(target.id, '*')
@@ -325,11 +330,11 @@ class PyParser(Parser):
                 var = Var(target.value.id)
                 self.addtype(target.value.id, '*')
                 index = self.visit_expr(target.slice.value)
-
+                
                 self.addexpr(target.value.id,
                              Op('AssignElement', var, index, right,
                                 line=right.line))
-
+                
             else:
                 raise NotSupported(
                     'Subscript assignments only allowed to Indices',
@@ -346,7 +351,7 @@ class PyParser(Parser):
                 else:
                     raise NotSupported("Tuple non-var assignment",
                                        line=target.line)
-
+                
         else:
             raise NotSupported(
                 'Assignments to {} not supported'.format(
@@ -361,7 +366,7 @@ class PyParser(Parser):
         # if it is done with += instead of +, so hacking this distinction
         if op == 'Add':
             op = 'AssAdd'
-
+        
         # Aug assign to a name
         if isinstance(node.target, ast.Name):
             target = Var(node.target.id)
@@ -381,7 +386,7 @@ class PyParser(Parser):
                          right, line=node.lineno)
                 self.addexpr(var.name, Op('AssignElement', var, index, rhs,
                                           line=node.lineno))
-
+                
             else:
                 raise NotSupported(
                     'Subscript assignments only allowed to Indices',
@@ -399,7 +404,7 @@ class PyParser(Parser):
         values_model = list(map(self.visit_expr, node.values))
         expr = Op('StrAppend', Var(VAR_OUT), *values_model, line=node.lineno)
         self.addexpr(VAR_OUT, expr)
-
+    
     def visit_Call(self, node):
         if len(node.keywords) > 0:
             raise NotSupported(
@@ -424,17 +429,17 @@ class PyParser(Parser):
                          num, num.line)
             return Const('?')
 
-        elif isinstance(node.func, ast.Attribute):
+        elif isinstance(node.func, ast.Attribute):            
             attr = node.func.attr
             val = self.visit_expr(node.func.value)
             args = list(map(self.visit_expr, node.args))
             if (isinstance(val, Var) and val.name in self.MODULE_NAMES
-                    and not self.hasvar(val.name)):
+                and not self.hasvar(val.name)):
 
                 # A bit of hack...
                 if val.name == 'm':
                     val.name = 'math'
-
+                    
                 return Op('%s_%s' % (val, attr), *args, line=node.lineno)
             if attr == 'pop':
                 if isinstance(val, Var):
@@ -454,6 +459,7 @@ class PyParser(Parser):
                 return Op('attr_len', val, *args, line=node.lineno)
 
             op = Op(attr, val, *args, line=node.lineno)
+
             # Results of (side-effect) attr functions are None,
             # so the result should be ignored, but we want to keep it
             # syntatically
@@ -461,7 +467,7 @@ class PyParser(Parser):
                 op = Op('ignore_none', op, line=op.line)
 
             return op
-
+        
         else:
             raise NotSupported(
                 'Call of {} not supported'.format(
@@ -490,17 +496,18 @@ class PyParser(Parser):
         if node.orelse:
             raise NotSupported("While-Else not supported",
                                line=self.getline(node.orelse))
-
+        
         self.visit_loop(node, None, node.test, None, node.body, False, 'while')
 
     def visit_For(self, node):
-
+        
         if node.orelse:
             raise NotSupported("For-Else not supported",
                                line=self.getline(node.orelse))
-
+        
         # Iterated expression
         it = self.visit_expr(node.iter)
+
         # Targets of iteration
         if isinstance(node.target, ast.Name):
             self.addtype(node.target.id, '*')
@@ -536,7 +543,7 @@ class PyParser(Parser):
         # Condition is ind_var < len(iter_var)
         cond = Op('Lt', ind_var.copy(), Op('len', it_var.copy()),
                   line=node.iter.lineno)
-
+                  
         # Assignments to iterated variable(s)
         prebody = []
         el = Op('GetElement', it_var.copy(), ind_var.copy(),
@@ -548,18 +555,19 @@ class PyParser(Parser):
                 eli = Op('GetElement', el.copy(), Const(str(i)),
                          line=node.target.lineno)
                 prebody.append((t.name, eli))
-
+        
         # Add index variable increment
         prebody.append((ind_var.name,
                         Op('Add', ind_var.copy(), Const(str(1)),
                            line=node.iter.lineno)))
+
         self.visit_loop(node, None, cond, None, node.body, False, 'for',
                         prebody=prebody)
 
     def visit_Break(self, node):
         if self.nobcs:
             return
-
+        
         # Find loop
         lastloop = self.lastloop()
         if not lastloop:
@@ -608,7 +616,7 @@ class PyParser(Parser):
 
     def visit_GeneratorExp(self, node):
         return self.visit_ListComp(node)
-
+    
     def visit_comprehension(self, node):
 
         # elt is an expression generating elements
@@ -652,40 +660,40 @@ class PyParser(Parser):
 
     def visit_ListComp(self, node):
         return self.visit_comprehension(node)
-
+    
         # elt = self.visit_expr(node.elt)
 
         # if len(node.generators) != 1:
         #     raise NotSupported("Only one generator supported",
         #                        line=node.lineno)
-
+        
         # gen = self.visit_expr(node.generators[0])
 
         # return Op('ListComp', elt, gen, line=node.lineno)
 
     def visit_SetComp(self, node):
         return self.visit_comprehension(node)
-
+    
         # elt = self.visit_expr(node.elt)
 
         # if len(node.generators) != 1:
         #     raise NotSupported("Only one generator supported",
         #                        line=node.lineno)
-
+        
         # gen = self.visit_expr(node.generators[0])
 
         # return Op('SetComp', elt, gen, line=node.lineno)
 
     def visit_DictComp(self, node):
         return self.visit_comprehension(node)
-
+    
         # key = self.visit_expr(node.key)
         # value = self.visit_expr(node.value)
-
+        
         # if len(node.generators) != 1:
         #     raise NotSupported("Only one generator supported",
         #                        line=node.lineno)
-
+        
         # gen = self.visit_expr(node.generators[0])
 
         # return Op('DictComp', key, value, gen, line=node.lineno)
@@ -711,7 +719,7 @@ class PyParser(Parser):
             return names
 
         raise NotSupported("Comprehension: not a list of names")
-
+    
     def getline(self, node):
         if isinstance(node, list):
             if len(node):
@@ -719,6 +727,5 @@ class PyParser(Parser):
             else:
                 return
         return node.lineno
-
 
 addlangparser('py', PyParser)

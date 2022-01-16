@@ -1,6 +1,5 @@
 def string_to_grid(s):
     result = []
-    a,b=1,2
     for row in s.splitlines():
         result.append([val for va in row])
     return result
