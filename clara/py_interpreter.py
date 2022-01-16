@@ -223,6 +223,12 @@ class PyInterpreter(Interpreter):
         return max(*x)
 
     @eargs
+    def execute_min(self, *x):
+        return min(*x)
+
+
+
+    @eargs
     def execute_Invert(self, x):
         return ~x
 

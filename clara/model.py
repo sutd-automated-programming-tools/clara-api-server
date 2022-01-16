@@ -212,7 +212,6 @@ class Op(Expr):
             assert isinstance(arg, Expr), \
                 "Operation's argument (#%d) should be Expression, got '%s'" % (
                     i, arg)
-
         self.name = str(name)
         self.args = list(args)
 

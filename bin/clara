@@ -155,7 +155,6 @@ Options are:
             self.error('Got both inputs and file with inputs: which to use?')
         if self.args is not None and self.argsfile is not None:
             self.error('Got both args and file with args: which to use?')
-        
         if self.ins is not None:
             self.ins = literal_eval(self.ins)
         if self.args is not None:
@@ -425,7 +424,7 @@ Options are:
             
         with open(src, 'r', encoding="utf-8") as f:
             code = f.read()
-            
+        # print('source:',src)
         model = self.parser.parse_code(code)
         model.name = src
         self.extract_exprs(model)
