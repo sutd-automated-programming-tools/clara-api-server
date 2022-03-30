@@ -1,6 +1,7 @@
 import re
 
 
+# remove cost to edit information
 def remove_cost(string):
     pattern = "\(cost=.+\)"
     replace = ''
@@ -8,11 +9,14 @@ def remove_cost(string):
     return string.strip()
 
 
+# adds 'at line number' for clarification of message
 def add_line_to_line_number(string):
     pattern = 'at (?=\d)'
     return re.sub(pattern, 'at line ', string)
 
 
+# post process feedback. it splits the feedback message lines into sepearte lines. Adds carets underneath to highlight
+# the nonmatching words
 def post_process_feedback(string):
     pattern = "('.*')\nto\n('.*')"
     array = string.split('\n')
@@ -31,9 +35,6 @@ def post_process_feedback(string):
         if i != 0 and array[i] == 'to':
             for match in matches:
                 if array[i - 1] == match[0] and array[i + 1] == match[1]:
-                    # make the function below
-                    # split the match in an array via space.find the nonmatching words in match tuples. note the incices for not matches.
-                    # insert carets under nonmatching words in the original string.handle edge cases of line breaks if character limits are passed
                     s, t = separate_brackets(match)
                     l1 = gen_first_level_hint(s, t)
                     s, t = generate_caret_strings((s, t))
@@ -49,13 +50,9 @@ def post_process_feedback(string):
     return string, l1_string
 
 
+#  function to generate carets under nonmatching words
 def generate_caret_strings(match):
-    # make the function below
-    # split the match in an array via space.find the nonmatching words in match tuples. note the incices for not matches.
-    # insert carets under nonmatching words in the original string.handle edge cases of line breaks if character limits are passed
     s, t = match
-    # separate brackets that are not part of string
-    # s,t=separate_brackets(match)
     arr1 = s.split()
     arr2 = t.split()
     sp1 = re.split(r'\S+', s)[1:]
@@ -89,6 +86,7 @@ def generate_caret_strings(match):
         return break_lines(s, t, cs1, cs)
 
 
+# break lines if line length would cause jupyter cell to overflow
 def break_lines(s, t, cs1, cs2):
     rs = rt = ''
     if len(s) < 111:
@@ -102,6 +100,7 @@ def break_lines(s, t, cs1, cs2):
     return rs, rt
 
 
+# helper function to separte pairs of brackers in comments from code
 def separate_brackets(match):
     s, t = match
     s = s[1:-1]
@@ -129,12 +128,13 @@ def separate_brackets(match):
         return "'" + t + "'", "'" + t + "'"
 
 
+# stitches up strings in code with original spaces preserved
 def gen_new_string(s):
     single_quote_indices = [x.start() for x in list(re.finditer('[\']', s))]
     double_quote_indices = [x.start() for x in list(re.finditer('["]', s))]
     escape_single_quote_indices = [x.start() for x in list(re.finditer('\\\\\'', '\\\'', s))]
     escape_double_quote_indices = [x.start() for x in list(re.finditer('\\\\"', '\\"', s))]
-    string_indices = gen_string_indices(single_quote_indices, double_quote_indices,
+    string_indices = get_string_indices(single_quote_indices, double_quote_indices,
                                         escape_single_quote_indices,
                                         escape_double_quote_indices)
     counter = 0
@@ -155,7 +155,8 @@ def gen_new_string(s):
     return s
 
 
-def gen_string_indices(single_quote_indices, double_quote_indices, escape_single_quote_indices,
+# gets string indices
+def get_string_indices(single_quote_indices, double_quote_indices, escape_single_quote_indices,
                        escape_double_quote_indices):
     string_indices = []
 
@@ -185,6 +186,7 @@ def gen_string_indices(single_quote_indices, double_quote_indices, escape_single
     return string_indices
 
 
+# generate indices for strings in codes
 def string_indices_generator(indices, indices2, escape_indices, escape_indices2):
     quote_pair = []
     if indices:
@@ -209,6 +211,7 @@ def string_indices_generator(indices, indices2, escape_indices, escape_indices2)
     return quote_pair, indices, indices2, escape_indices, escape_indices2
 
 
+#  generates first level hint
 def gen_first_level_hint(s, t):
     arr1 = s.split()
     arr2 = t.split()
@@ -222,6 +225,7 @@ def gen_first_level_hint(s, t):
     return string
 
 
+# the main function that invokes all the function to make changes to feedback messages
 def postparse(string):
     string = remove_cost(string)
     string = add_line_to_line_number(string)

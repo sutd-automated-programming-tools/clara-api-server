@@ -266,7 +266,7 @@ def save_file(path, name, sol):
             writer.write(sol)
 
 
-# make a index.txt file to save all the submission folders
+# makes an index.txt file to save all the submission folders
 def make_index(path):
     _, truncated = path.split(os.getcwd() + '/submissions/')
     if os.path.isfile('index.txt'):
@@ -327,7 +327,7 @@ def redoc():
 # async def read_users_me(current_user: User = Depends(get_current_active_user)):
 #     return current_user
 
-
+# submits a snippet of code, creates a submission folder if it doesn't exist and saves the code in a file
 @app.post('/submit_snippet/', tags=["submit"], status_code=201)
 # def submit_snippet(submission: Submission, current_user: User = Depends(get_current_active_user)):
 def submit_snippet(submission: Submission):
