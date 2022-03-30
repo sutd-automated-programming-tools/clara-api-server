@@ -1,3 +1,4 @@
+#make sure to use python 3.7 or less
 echo 'adding path to .bashrc'
 echo 'export LD_LIBRARY_PATH=/usr/lib/lp_solve/
 export PATH=$PATH:/home/ismam/.local/bin'>>~/.bashrc
