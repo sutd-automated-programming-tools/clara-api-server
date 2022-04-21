@@ -1,0 +1,2294 @@
+[
+  {
+    "fnc": "search_position",
+    "loc": 4,
+    "var": "$ret",
+    "expr": {
+      "type": "Op",
+      "name": "ite",
+      "args": [
+        {
+          "type": "Op",
+          "name": "Lt",
+          "args": [
+            {
+              "type": "Var",
+              "name": "target",
+              "primed": false,
+              "original": null
+            },
+            {
+              "type": "Var",
+              "name": "item",
+              "primed": true,
+              "original": null
+            }
+          ],
+          "original": null
+        },
+        {
+          "type": "Var",
+          "name": "index",
+          "primed": false,
+          "original": null
+        },
+        {
+          "type": "Op",
+          "name": "ite",
+          "args": [
+            {
+              "type": "Op",
+              "name": "Eq",
+              "args": [
+                {
+                  "type": "Var",
+                  "name": "target",
+                  "primed": false,
+                  "original": null
+                },
+                {
+                  "type": "Var",
+                  "name": "item",
+                  "primed": true,
+                  "original": null
+                }
+              ],
+              "original": null
+            },
+            {
+              "type": "Var",
+              "name": "index",
+              "primed": false,
+              "original": null
+            },
+            {
+              "type": "Op",
+              "name": "ite",
+              "args": [
+                {
+                  "type": "Op",
+                  "name": "And",
+                  "args": [
+                    {
+                      "type": "Op",
+                      "name": "Gt",
+                      "args": [
+                        {
+                          "type": "Var",
+                          "name": "target",
+                          "primed": false,
+                          "original": null
+                        },
+                        {
+                          "type": "Var",
+                          "name": "item",
+                          "primed": true,
+                          "original": null
+                        }
+                      ],
+                      "original": null
+                    },
+                    {
+                      "type": "Op",
+                      "name": "Or",
+                      "args": [
+                        {
+                          "type": "Op",
+                          "name": "Eq",
+                          "args": [
+                            {
+                              "type": "Var",
+                              "name": "index",
+                              "primed": false,
+                              "original": null
+                            },
+                            {
+                              "type": "Op",
+                              "name": "Sub",
+                              "args": [
+                                {
+                                  "type": "Op",
+                                  "name": "len",
+                                  "args": [
+                                    {
+                                      "type": "Var",
+                                      "name": "array",
+                                      "primed": false,
+                                      "original": null
+                                    }
+                                  ],
+                                  "original": null
+                                },
+                                {
+                                  "type": "Const",
+                                  "value": "1",
+                                  "original": null
+                                }
+                              ],
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        },
+                        {
+                          "type": "Op",
+                          "name": "Lt",
+                          "args": [
+                            {
+                              "type": "Var",
+                              "name": "target",
+                              "primed": false,
+                              "original": null
+                            },
+                            {
+                              "type": "Op",
+                              "name": "GetElement",
+                              "args": [
+                                {
+                                  "type": "Var",
+                                  "name": "array",
+                                  "primed": false,
+                                  "original": null
+                                },
+                                {
+                                  "type": "Op",
+                                  "name": "Add",
+                                  "args": [
+                                    {
+                                      "type": "Var",
+                                      "name": "index",
+                                      "primed": false,
+                                      "original": null
+                                    },
+                                    {
+                                      "type": "Const",
+                                      "value": "1",
+                                      "original": null
+                                    }
+                                  ],
+                                  "original": null
+                                }
+                              ],
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        }
+                      ],
+                      "original": null
+                    }
+                  ],
+                  "original": null
+                },
+                {
+                  "type": "Op",
+                  "name": "Add",
+                  "args": [
+                    {
+                      "type": "Var",
+                      "name": "index",
+                      "primed": false,
+                      "original": null
+                    },
+                    {
+                      "type": "Const",
+                      "value": "1",
+                      "original": null
+                    }
+                  ],
+                  "original": null
+                },
+                {
+                  "type": "Var",
+                  "name": "$ret",
+                  "primed": false,
+                  "original": null
+                }
+              ],
+              "original": null
+            }
+          ],
+          "original": null
+        }
+      ],
+      "original": null
+    },
+    "src": null
+  },
+  {
+    "fnc": "search_position",
+    "loc": 4,
+    "var": "$ret",
+    "expr": {
+      "type": "Op",
+      "name": "ite",
+      "args": [
+        {
+          "type": "Op",
+          "name": "Lt",
+          "args": [
+            {
+              "type": "Var",
+              "name": "target",
+              "primed": false,
+              "original": null
+            },
+            {
+              "type": "Var",
+              "name": "item",
+              "primed": true,
+              "original": null
+            }
+          ],
+          "original": null
+        },
+        {
+          "type": "Var",
+          "name": "index",
+          "primed": false,
+          "original": null
+        },
+        {
+          "type": "Op",
+          "name": "ite",
+          "args": [
+            {
+              "type": "Op",
+              "name": "Eq",
+              "args": [
+                {
+                  "type": "Var",
+                  "name": "target",
+                  "primed": false,
+                  "original": null
+                },
+                {
+                  "type": "Var",
+                  "name": "item",
+                  "primed": true,
+                  "original": null
+                }
+              ],
+              "original": null
+            },
+            {
+              "type": "Var",
+              "name": "index",
+              "primed": false,
+              "original": null
+            },
+            {
+              "type": "Op",
+              "name": "ite",
+              "args": [
+                {
+                  "type": "Op",
+                  "name": "And",
+                  "args": [
+                    {
+                      "type": "Op",
+                      "name": "Gt",
+                      "args": [
+                        {
+                          "type": "Var",
+                          "name": "target",
+                          "primed": false,
+                          "original": null
+                        },
+                        {
+                          "type": "Var",
+                          "name": "item",
+                          "primed": true,
+                          "original": null
+                        }
+                      ],
+                      "original": null
+                    },
+                    {
+                      "type": "Op",
+                      "name": "Eq",
+                      "args": [
+                        {
+                          "type": "Var",
+                          "name": "index",
+                          "primed": false,
+                          "original": null
+                        },
+                        {
+                          "type": "Op",
+                          "name": "Sub",
+                          "args": [
+                            {
+                              "type": "Op",
+                              "name": "len",
+                              "args": [
+                                {
+                                  "type": "Var",
+                                  "name": "array",
+                                  "primed": false,
+                                  "original": null
+                                }
+                              ],
+                              "original": null
+                            },
+                            {
+                              "type": "Const",
+                              "value": "1",
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        }
+                      ],
+                      "original": null
+                    }
+                  ],
+                  "original": null
+                },
+                {
+                  "type": "Op",
+                  "name": "Add",
+                  "args": [
+                    {
+                      "type": "Var",
+                      "name": "index",
+                      "primed": false,
+                      "original": null
+                    },
+                    {
+                      "type": "Const",
+                      "value": "1",
+                      "original": null
+                    }
+                  ],
+                  "original": null
+                },
+                {
+                  "type": "Op",
+                  "name": "ite",
+                  "args": [
+                    {
+                      "type": "Op",
+                      "name": "And",
+                      "args": [
+                        {
+                          "type": "Op",
+                          "name": "Gt",
+                          "args": [
+                            {
+                              "type": "Var",
+                              "name": "target",
+                              "primed": false,
+                              "original": null
+                            },
+                            {
+                              "type": "Var",
+                              "name": "item",
+                              "primed": true,
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        },
+                        {
+                          "type": "Op",
+                          "name": "Lt",
+                          "args": [
+                            {
+                              "type": "Var",
+                              "name": "target",
+                              "primed": false,
+                              "original": null
+                            },
+                            {
+                              "type": "Op",
+                              "name": "GetElement",
+                              "args": [
+                                {
+                                  "type": "Var",
+                                  "name": "array",
+                                  "primed": false,
+                                  "original": null
+                                },
+                                {
+                                  "type": "Op",
+                                  "name": "Add",
+                                  "args": [
+                                    {
+                                      "type": "Var",
+                                      "name": "index",
+                                      "primed": false,
+                                      "original": null
+                                    },
+                                    {
+                                      "type": "Const",
+                                      "value": "1",
+                                      "original": null
+                                    }
+                                  ],
+                                  "original": null
+                                }
+                              ],
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        }
+                      ],
+                      "original": null
+                    },
+                    {
+                      "type": "Op",
+                      "name": "Add",
+                      "args": [
+                        {
+                          "type": "Var",
+                          "name": "index",
+                          "primed": false,
+                          "original": null
+                        },
+                        {
+                          "type": "Const",
+                          "value": "1",
+                          "original": null
+                        }
+                      ],
+                      "original": null
+                    },
+                    {
+                      "type": "Var",
+                      "name": "$ret",
+                      "primed": false,
+                      "original": null
+                    }
+                  ],
+                  "original": null
+                }
+              ],
+              "original": null
+            }
+          ],
+          "original": null
+        }
+      ],
+      "original": null
+    },
+    "src": "submissions/exp/term1/p1/a5.py"
+  },
+  {
+    "fnc": "search_position",
+    "loc": 4,
+    "var": "$ret",
+    "expr": {
+      "type": "Op",
+      "name": "ite",
+      "args": [
+        {
+          "type": "Op",
+          "name": "LtE",
+          "args": [
+            {
+              "type": "Var",
+              "name": "target",
+              "primed": false,
+              "original": null
+            },
+            {
+              "type": "Var",
+              "name": "item",
+              "primed": true,
+              "original": null
+            }
+          ],
+          "original": null
+        },
+        {
+          "type": "Var",
+          "name": "index",
+          "primed": false,
+          "original": null
+        },
+        {
+          "type": "Op",
+          "name": "ite",
+          "args": [
+            {
+              "type": "Op",
+              "name": "And",
+              "args": [
+                {
+                  "type": "Op",
+                  "name": "Gt",
+                  "args": [
+                    {
+                      "type": "Var",
+                      "name": "target",
+                      "primed": false,
+                      "original": null
+                    },
+                    {
+                      "type": "Var",
+                      "name": "item",
+                      "primed": true,
+                      "original": null
+                    }
+                  ],
+                  "original": null
+                },
+                {
+                  "type": "Op",
+                  "name": "Eq",
+                  "args": [
+                    {
+                      "type": "Var",
+                      "name": "index",
+                      "primed": false,
+                      "original": null
+                    },
+                    {
+                      "type": "Op",
+                      "name": "Sub",
+                      "args": [
+                        {
+                          "type": "Op",
+                          "name": "len",
+                          "args": [
+                            {
+                              "type": "Var",
+                              "name": "array",
+                              "primed": false,
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        },
+                        {
+                          "type": "Const",
+                          "value": "1",
+                          "original": null
+                        }
+                      ],
+                      "original": null
+                    }
+                  ],
+                  "original": null
+                }
+              ],
+              "original": null
+            },
+            {
+              "type": "Op",
+              "name": "Add",
+              "args": [
+                {
+                  "type": "Var",
+                  "name": "index",
+                  "primed": false,
+                  "original": null
+                },
+                {
+                  "type": "Const",
+                  "value": "1",
+                  "original": null
+                }
+              ],
+              "original": null
+            },
+            {
+              "type": "Op",
+              "name": "ite",
+              "args": [
+                {
+                  "type": "Op",
+                  "name": "And",
+                  "args": [
+                    {
+                      "type": "Op",
+                      "name": "Gt",
+                      "args": [
+                        {
+                          "type": "Var",
+                          "name": "target",
+                          "primed": false,
+                          "original": null
+                        },
+                        {
+                          "type": "Var",
+                          "name": "item",
+                          "primed": true,
+                          "original": null
+                        }
+                      ],
+                      "original": null
+                    },
+                    {
+                      "type": "Op",
+                      "name": "Lt",
+                      "args": [
+                        {
+                          "type": "Var",
+                          "name": "target",
+                          "primed": false,
+                          "original": null
+                        },
+                        {
+                          "type": "Op",
+                          "name": "GetElement",
+                          "args": [
+                            {
+                              "type": "Var",
+                              "name": "array",
+                              "primed": false,
+                              "original": null
+                            },
+                            {
+                              "type": "Op",
+                              "name": "Add",
+                              "args": [
+                                {
+                                  "type": "Var",
+                                  "name": "index",
+                                  "primed": false,
+                                  "original": null
+                                },
+                                {
+                                  "type": "Const",
+                                  "value": "1",
+                                  "original": null
+                                }
+                              ],
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        }
+                      ],
+                      "original": null
+                    }
+                  ],
+                  "original": null
+                },
+                {
+                  "type": "Op",
+                  "name": "Add",
+                  "args": [
+                    {
+                      "type": "Var",
+                      "name": "index",
+                      "primed": false,
+                      "original": null
+                    },
+                    {
+                      "type": "Const",
+                      "value": "1",
+                      "original": null
+                    }
+                  ],
+                  "original": null
+                },
+                {
+                  "type": "Var",
+                  "name": "$ret",
+                  "primed": false,
+                  "original": null
+                }
+              ],
+              "original": null
+            }
+          ],
+          "original": null
+        }
+      ],
+      "original": null
+    },
+    "src": "submissions/exp/term1/p1/a6.py"
+  },
+  {
+    "fnc": "search_position",
+    "loc": 4,
+    "var": "index",
+    "expr": {
+      "type": "Op",
+      "name": "ite",
+      "args": [
+        {
+          "type": "Op",
+          "name": "Not",
+          "args": [
+            {
+              "type": "Op",
+              "name": "Or",
+              "args": [
+                {
+                  "type": "Op",
+                  "name": "Lt",
+                  "args": [
+                    {
+                      "type": "Var",
+                      "name": "target",
+                      "primed": false,
+                      "original": null
+                    },
+                    {
+                      "type": "Var",
+                      "name": "item",
+                      "primed": true,
+                      "original": null
+                    }
+                  ],
+                  "original": null
+                },
+                {
+                  "type": "Op",
+                  "name": "And",
+                  "args": [
+                    {
+                      "type": "Op",
+                      "name": "Not",
+                      "args": [
+                        {
+                          "type": "Op",
+                          "name": "Lt",
+                          "args": [
+                            {
+                              "type": "Var",
+                              "name": "target",
+                              "primed": false,
+                              "original": null
+                            },
+                            {
+                              "type": "Var",
+                              "name": "item",
+                              "primed": true,
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        }
+                      ],
+                      "original": null
+                    },
+                    {
+                      "type": "Op",
+                      "name": "Or",
+                      "args": [
+                        {
+                          "type": "Op",
+                          "name": "Eq",
+                          "args": [
+                            {
+                              "type": "Var",
+                              "name": "target",
+                              "primed": false,
+                              "original": null
+                            },
+                            {
+                              "type": "Var",
+                              "name": "item",
+                              "primed": true,
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        },
+                        {
+                          "type": "Op",
+                          "name": "And",
+                          "args": [
+                            {
+                              "type": "Op",
+                              "name": "Not",
+                              "args": [
+                                {
+                                  "type": "Op",
+                                  "name": "Eq",
+                                  "args": [
+                                    {
+                                      "type": "Var",
+                                      "name": "target",
+                                      "primed": false,
+                                      "original": null
+                                    },
+                                    {
+                                      "type": "Var",
+                                      "name": "item",
+                                      "primed": true,
+                                      "original": null
+                                    }
+                                  ],
+                                  "original": null
+                                }
+                              ],
+                              "original": null
+                            },
+                            {
+                              "type": "Op",
+                              "name": "And",
+                              "args": [
+                                {
+                                  "type": "Op",
+                                  "name": "Gt",
+                                  "args": [
+                                    {
+                                      "type": "Var",
+                                      "name": "target",
+                                      "primed": false,
+                                      "original": null
+                                    },
+                                    {
+                                      "type": "Var",
+                                      "name": "item",
+                                      "primed": true,
+                                      "original": null
+                                    }
+                                  ],
+                                  "original": null
+                                },
+                                {
+                                  "type": "Op",
+                                  "name": "Or",
+                                  "args": [
+                                    {
+                                      "type": "Op",
+                                      "name": "Eq",
+                                      "args": [
+                                        {
+                                          "type": "Var",
+                                          "name": "index",
+                                          "primed": false,
+                                          "original": null
+                                        },
+                                        {
+                                          "type": "Op",
+                                          "name": "Sub",
+                                          "args": [
+                                            {
+                                              "type": "Op",
+                                              "name": "len",
+                                              "args": [
+                                                {
+                                                  "type": "Var",
+                                                  "name": "array",
+                                                  "primed": false,
+                                                  "original": null
+                                                }
+                                              ],
+                                              "original": null
+                                            },
+                                            {
+                                              "type": "Const",
+                                              "value": "1",
+                                              "original": null
+                                            }
+                                          ],
+                                          "original": null
+                                        }
+                                      ],
+                                      "original": null
+                                    },
+                                    {
+                                      "type": "Op",
+                                      "name": "Lt",
+                                      "args": [
+                                        {
+                                          "type": "Var",
+                                          "name": "target",
+                                          "primed": false,
+                                          "original": null
+                                        },
+                                        {
+                                          "type": "Op",
+                                          "name": "GetElement",
+                                          "args": [
+                                            {
+                                              "type": "Var",
+                                              "name": "array",
+                                              "primed": false,
+                                              "original": null
+                                            },
+                                            {
+                                              "type": "Op",
+                                              "name": "Add",
+                                              "args": [
+                                                {
+                                                  "type": "Var",
+                                                  "name": "index",
+                                                  "primed": false,
+                                                  "original": null
+                                                },
+                                                {
+                                                  "type": "Const",
+                                                  "value": "1",
+                                                  "original": null
+                                                }
+                                              ],
+                                              "original": null
+                                            }
+                                          ],
+                                          "original": null
+                                        }
+                                      ],
+                                      "original": null
+                                    }
+                                  ],
+                                  "original": null
+                                }
+                              ],
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        }
+                      ],
+                      "original": null
+                    }
+                  ],
+                  "original": null
+                }
+              ],
+              "original": null
+            }
+          ],
+          "original": null
+        },
+        {
+          "type": "Op",
+          "name": "ite",
+          "args": [
+            {
+              "type": "Op",
+              "name": "Lt",
+              "args": [
+                {
+                  "type": "Var",
+                  "name": "target",
+                  "primed": false,
+                  "original": null
+                },
+                {
+                  "type": "Var",
+                  "name": "item",
+                  "primed": true,
+                  "original": null
+                }
+              ],
+              "original": null
+            },
+            {
+              "type": "Var",
+              "name": "index",
+              "primed": false,
+              "original": null
+            },
+            {
+              "type": "Op",
+              "name": "ite",
+              "args": [
+                {
+                  "type": "Op",
+                  "name": "Eq",
+                  "args": [
+                    {
+                      "type": "Var",
+                      "name": "target",
+                      "primed": false,
+                      "original": null
+                    },
+                    {
+                      "type": "Var",
+                      "name": "item",
+                      "primed": true,
+                      "original": null
+                    }
+                  ],
+                  "original": null
+                },
+                {
+                  "type": "Var",
+                  "name": "index",
+                  "primed": false,
+                  "original": null
+                },
+                {
+                  "type": "Op",
+                  "name": "ite",
+                  "args": [
+                    {
+                      "type": "Op",
+                      "name": "And",
+                      "args": [
+                        {
+                          "type": "Op",
+                          "name": "Gt",
+                          "args": [
+                            {
+                              "type": "Var",
+                              "name": "target",
+                              "primed": false,
+                              "original": null
+                            },
+                            {
+                              "type": "Var",
+                              "name": "item",
+                              "primed": true,
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        },
+                        {
+                          "type": "Op",
+                          "name": "Or",
+                          "args": [
+                            {
+                              "type": "Op",
+                              "name": "Eq",
+                              "args": [
+                                {
+                                  "type": "Var",
+                                  "name": "index",
+                                  "primed": false,
+                                  "original": null
+                                },
+                                {
+                                  "type": "Op",
+                                  "name": "Sub",
+                                  "args": [
+                                    {
+                                      "type": "Op",
+                                      "name": "len",
+                                      "args": [
+                                        {
+                                          "type": "Var",
+                                          "name": "array",
+                                          "primed": false,
+                                          "original": null
+                                        }
+                                      ],
+                                      "original": null
+                                    },
+                                    {
+                                      "type": "Const",
+                                      "value": "1",
+                                      "original": null
+                                    }
+                                  ],
+                                  "original": null
+                                }
+                              ],
+                              "original": null
+                            },
+                            {
+                              "type": "Op",
+                              "name": "Lt",
+                              "args": [
+                                {
+                                  "type": "Var",
+                                  "name": "target",
+                                  "primed": false,
+                                  "original": null
+                                },
+                                {
+                                  "type": "Op",
+                                  "name": "GetElement",
+                                  "args": [
+                                    {
+                                      "type": "Var",
+                                      "name": "array",
+                                      "primed": false,
+                                      "original": null
+                                    },
+                                    {
+                                      "type": "Op",
+                                      "name": "Add",
+                                      "args": [
+                                        {
+                                          "type": "Var",
+                                          "name": "index",
+                                          "primed": false,
+                                          "original": null
+                                        },
+                                        {
+                                          "type": "Const",
+                                          "value": "1",
+                                          "original": null
+                                        }
+                                      ],
+                                      "original": null
+                                    }
+                                  ],
+                                  "original": null
+                                }
+                              ],
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        }
+                      ],
+                      "original": null
+                    },
+                    {
+                      "type": "Var",
+                      "name": "index",
+                      "primed": false,
+                      "original": null
+                    },
+                    {
+                      "type": "Op",
+                      "name": "AssAdd",
+                      "args": [
+                        {
+                          "type": "Var",
+                          "name": "index",
+                          "primed": false,
+                          "original": null
+                        },
+                        {
+                          "type": "Const",
+                          "value": "1",
+                          "original": null
+                        }
+                      ],
+                      "original": null
+                    }
+                  ],
+                  "original": null
+                }
+              ],
+              "original": null
+            }
+          ],
+          "original": null
+        },
+        {
+          "type": "Var",
+          "name": "index",
+          "primed": false,
+          "original": null
+        }
+      ],
+      "original": null
+    },
+    "src": null
+  },
+  {
+    "fnc": "search_position",
+    "loc": 4,
+    "var": "index",
+    "expr": {
+      "type": "Op",
+      "name": "ite",
+      "args": [
+        {
+          "type": "Op",
+          "name": "Not",
+          "args": [
+            {
+              "type": "Op",
+              "name": "Or",
+              "args": [
+                {
+                  "type": "Op",
+                  "name": "LtE",
+                  "args": [
+                    {
+                      "type": "Var",
+                      "name": "target",
+                      "primed": false,
+                      "original": null
+                    },
+                    {
+                      "type": "Var",
+                      "name": "item",
+                      "primed": true,
+                      "original": null
+                    }
+                  ],
+                  "original": null
+                },
+                {
+                  "type": "Op",
+                  "name": "And",
+                  "args": [
+                    {
+                      "type": "Op",
+                      "name": "Not",
+                      "args": [
+                        {
+                          "type": "Op",
+                          "name": "LtE",
+                          "args": [
+                            {
+                              "type": "Var",
+                              "name": "target",
+                              "primed": false,
+                              "original": null
+                            },
+                            {
+                              "type": "Var",
+                              "name": "item",
+                              "primed": true,
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        }
+                      ],
+                      "original": null
+                    },
+                    {
+                      "type": "Op",
+                      "name": "Or",
+                      "args": [
+                        {
+                          "type": "Op",
+                          "name": "And",
+                          "args": [
+                            {
+                              "type": "Op",
+                              "name": "Gt",
+                              "args": [
+                                {
+                                  "type": "Var",
+                                  "name": "target",
+                                  "primed": false,
+                                  "original": null
+                                },
+                                {
+                                  "type": "Var",
+                                  "name": "item",
+                                  "primed": true,
+                                  "original": null
+                                }
+                              ],
+                              "original": null
+                            },
+                            {
+                              "type": "Op",
+                              "name": "Eq",
+                              "args": [
+                                {
+                                  "type": "Var",
+                                  "name": "index",
+                                  "primed": false,
+                                  "original": null
+                                },
+                                {
+                                  "type": "Op",
+                                  "name": "Sub",
+                                  "args": [
+                                    {
+                                      "type": "Op",
+                                      "name": "len",
+                                      "args": [
+                                        {
+                                          "type": "Var",
+                                          "name": "array",
+                                          "primed": false,
+                                          "original": null
+                                        }
+                                      ],
+                                      "original": null
+                                    },
+                                    {
+                                      "type": "Const",
+                                      "value": "1",
+                                      "original": null
+                                    }
+                                  ],
+                                  "original": null
+                                }
+                              ],
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        },
+                        {
+                          "type": "Op",
+                          "name": "And",
+                          "args": [
+                            {
+                              "type": "Op",
+                              "name": "Not",
+                              "args": [
+                                {
+                                  "type": "Op",
+                                  "name": "And",
+                                  "args": [
+                                    {
+                                      "type": "Op",
+                                      "name": "Gt",
+                                      "args": [
+                                        {
+                                          "type": "Var",
+                                          "name": "target",
+                                          "primed": false,
+                                          "original": null
+                                        },
+                                        {
+                                          "type": "Var",
+                                          "name": "item",
+                                          "primed": true,
+                                          "original": null
+                                        }
+                                      ],
+                                      "original": null
+                                    },
+                                    {
+                                      "type": "Op",
+                                      "name": "Eq",
+                                      "args": [
+                                        {
+                                          "type": "Var",
+                                          "name": "index",
+                                          "primed": false,
+                                          "original": null
+                                        },
+                                        {
+                                          "type": "Op",
+                                          "name": "Sub",
+                                          "args": [
+                                            {
+                                              "type": "Op",
+                                              "name": "len",
+                                              "args": [
+                                                {
+                                                  "type": "Var",
+                                                  "name": "array",
+                                                  "primed": false,
+                                                  "original": null
+                                                }
+                                              ],
+                                              "original": null
+                                            },
+                                            {
+                                              "type": "Const",
+                                              "value": "1",
+                                              "original": null
+                                            }
+                                          ],
+                                          "original": null
+                                        }
+                                      ],
+                                      "original": null
+                                    }
+                                  ],
+                                  "original": null
+                                }
+                              ],
+                              "original": null
+                            },
+                            {
+                              "type": "Op",
+                              "name": "And",
+                              "args": [
+                                {
+                                  "type": "Op",
+                                  "name": "Gt",
+                                  "args": [
+                                    {
+                                      "type": "Var",
+                                      "name": "target",
+                                      "primed": false,
+                                      "original": null
+                                    },
+                                    {
+                                      "type": "Var",
+                                      "name": "item",
+                                      "primed": true,
+                                      "original": null
+                                    }
+                                  ],
+                                  "original": null
+                                },
+                                {
+                                  "type": "Op",
+                                  "name": "Lt",
+                                  "args": [
+                                    {
+                                      "type": "Var",
+                                      "name": "target",
+                                      "primed": false,
+                                      "original": null
+                                    },
+                                    {
+                                      "type": "Op",
+                                      "name": "GetElement",
+                                      "args": [
+                                        {
+                                          "type": "Var",
+                                          "name": "array",
+                                          "primed": false,
+                                          "original": null
+                                        },
+                                        {
+                                          "type": "Op",
+                                          "name": "Add",
+                                          "args": [
+                                            {
+                                              "type": "Var",
+                                              "name": "index",
+                                              "primed": false,
+                                              "original": null
+                                            },
+                                            {
+                                              "type": "Const",
+                                              "value": "1",
+                                              "original": null
+                                            }
+                                          ],
+                                          "original": null
+                                        }
+                                      ],
+                                      "original": null
+                                    }
+                                  ],
+                                  "original": null
+                                }
+                              ],
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        }
+                      ],
+                      "original": null
+                    }
+                  ],
+                  "original": null
+                }
+              ],
+              "original": null
+            }
+          ],
+          "original": null
+        },
+        {
+          "type": "Op",
+          "name": "ite",
+          "args": [
+            {
+              "type": "Op",
+              "name": "LtE",
+              "args": [
+                {
+                  "type": "Var",
+                  "name": "target",
+                  "primed": false,
+                  "original": null
+                },
+                {
+                  "type": "Var",
+                  "name": "item",
+                  "primed": true,
+                  "original": null
+                }
+              ],
+              "original": null
+            },
+            {
+              "type": "Var",
+              "name": "index",
+              "primed": false,
+              "original": null
+            },
+            {
+              "type": "Op",
+              "name": "ite",
+              "args": [
+                {
+                  "type": "Op",
+                  "name": "And",
+                  "args": [
+                    {
+                      "type": "Op",
+                      "name": "Gt",
+                      "args": [
+                        {
+                          "type": "Var",
+                          "name": "target",
+                          "primed": false,
+                          "original": null
+                        },
+                        {
+                          "type": "Var",
+                          "name": "item",
+                          "primed": true,
+                          "original": null
+                        }
+                      ],
+                      "original": null
+                    },
+                    {
+                      "type": "Op",
+                      "name": "Eq",
+                      "args": [
+                        {
+                          "type": "Var",
+                          "name": "index",
+                          "primed": false,
+                          "original": null
+                        },
+                        {
+                          "type": "Op",
+                          "name": "Sub",
+                          "args": [
+                            {
+                              "type": "Op",
+                              "name": "len",
+                              "args": [
+                                {
+                                  "type": "Var",
+                                  "name": "array",
+                                  "primed": false,
+                                  "original": null
+                                }
+                              ],
+                              "original": null
+                            },
+                            {
+                              "type": "Const",
+                              "value": "1",
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        }
+                      ],
+                      "original": null
+                    }
+                  ],
+                  "original": null
+                },
+                {
+                  "type": "Var",
+                  "name": "index",
+                  "primed": false,
+                  "original": null
+                },
+                {
+                  "type": "Op",
+                  "name": "ite",
+                  "args": [
+                    {
+                      "type": "Op",
+                      "name": "And",
+                      "args": [
+                        {
+                          "type": "Op",
+                          "name": "Gt",
+                          "args": [
+                            {
+                              "type": "Var",
+                              "name": "target",
+                              "primed": false,
+                              "original": null
+                            },
+                            {
+                              "type": "Var",
+                              "name": "item",
+                              "primed": true,
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        },
+                        {
+                          "type": "Op",
+                          "name": "Lt",
+                          "args": [
+                            {
+                              "type": "Var",
+                              "name": "target",
+                              "primed": false,
+                              "original": null
+                            },
+                            {
+                              "type": "Op",
+                              "name": "GetElement",
+                              "args": [
+                                {
+                                  "type": "Var",
+                                  "name": "array",
+                                  "primed": false,
+                                  "original": null
+                                },
+                                {
+                                  "type": "Op",
+                                  "name": "Add",
+                                  "args": [
+                                    {
+                                      "type": "Var",
+                                      "name": "index",
+                                      "primed": false,
+                                      "original": null
+                                    },
+                                    {
+                                      "type": "Const",
+                                      "value": "1",
+                                      "original": null
+                                    }
+                                  ],
+                                  "original": null
+                                }
+                              ],
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        }
+                      ],
+                      "original": null
+                    },
+                    {
+                      "type": "Var",
+                      "name": "index",
+                      "primed": false,
+                      "original": null
+                    },
+                    {
+                      "type": "Op",
+                      "name": "AssAdd",
+                      "args": [
+                        {
+                          "type": "Var",
+                          "name": "index",
+                          "primed": false,
+                          "original": null
+                        },
+                        {
+                          "type": "Const",
+                          "value": "1",
+                          "original": null
+                        }
+                      ],
+                      "original": null
+                    }
+                  ],
+                  "original": null
+                }
+              ],
+              "original": null
+            }
+          ],
+          "original": null
+        },
+        {
+          "type": "Var",
+          "name": "index",
+          "primed": false,
+          "original": null
+        }
+      ],
+      "original": null
+    },
+    "src": "submissions/exp/term1/p1/a6.py"
+  },
+  {
+    "fnc": "search_position",
+    "loc": 4,
+    "var": "index",
+    "expr": {
+      "type": "Op",
+      "name": "ite",
+      "args": [
+        {
+          "type": "Op",
+          "name": "Not",
+          "args": [
+            {
+              "type": "Op",
+              "name": "Or",
+              "args": [
+                {
+                  "type": "Op",
+                  "name": "Lt",
+                  "args": [
+                    {
+                      "type": "Var",
+                      "name": "target",
+                      "primed": false,
+                      "original": null
+                    },
+                    {
+                      "type": "Var",
+                      "name": "item",
+                      "primed": true,
+                      "original": null
+                    }
+                  ],
+                  "original": null
+                },
+                {
+                  "type": "Op",
+                  "name": "And",
+                  "args": [
+                    {
+                      "type": "Op",
+                      "name": "Not",
+                      "args": [
+                        {
+                          "type": "Op",
+                          "name": "Lt",
+                          "args": [
+                            {
+                              "type": "Var",
+                              "name": "target",
+                              "primed": false,
+                              "original": null
+                            },
+                            {
+                              "type": "Var",
+                              "name": "item",
+                              "primed": true,
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        }
+                      ],
+                      "original": null
+                    },
+                    {
+                      "type": "Op",
+                      "name": "Or",
+                      "args": [
+                        {
+                          "type": "Op",
+                          "name": "Eq",
+                          "args": [
+                            {
+                              "type": "Var",
+                              "name": "target",
+                              "primed": false,
+                              "original": null
+                            },
+                            {
+                              "type": "Var",
+                              "name": "item",
+                              "primed": true,
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        },
+                        {
+                          "type": "Op",
+                          "name": "And",
+                          "args": [
+                            {
+                              "type": "Op",
+                              "name": "Not",
+                              "args": [
+                                {
+                                  "type": "Op",
+                                  "name": "Eq",
+                                  "args": [
+                                    {
+                                      "type": "Var",
+                                      "name": "target",
+                                      "primed": false,
+                                      "original": null
+                                    },
+                                    {
+                                      "type": "Var",
+                                      "name": "item",
+                                      "primed": true,
+                                      "original": null
+                                    }
+                                  ],
+                                  "original": null
+                                }
+                              ],
+                              "original": null
+                            },
+                            {
+                              "type": "Op",
+                              "name": "Or",
+                              "args": [
+                                {
+                                  "type": "Op",
+                                  "name": "And",
+                                  "args": [
+                                    {
+                                      "type": "Op",
+                                      "name": "Gt",
+                                      "args": [
+                                        {
+                                          "type": "Var",
+                                          "name": "target",
+                                          "primed": false,
+                                          "original": null
+                                        },
+                                        {
+                                          "type": "Var",
+                                          "name": "item",
+                                          "primed": true,
+                                          "original": null
+                                        }
+                                      ],
+                                      "original": null
+                                    },
+                                    {
+                                      "type": "Op",
+                                      "name": "Eq",
+                                      "args": [
+                                        {
+                                          "type": "Var",
+                                          "name": "index",
+                                          "primed": false,
+                                          "original": null
+                                        },
+                                        {
+                                          "type": "Op",
+                                          "name": "Sub",
+                                          "args": [
+                                            {
+                                              "type": "Op",
+                                              "name": "len",
+                                              "args": [
+                                                {
+                                                  "type": "Var",
+                                                  "name": "array",
+                                                  "primed": false,
+                                                  "original": null
+                                                }
+                                              ],
+                                              "original": null
+                                            },
+                                            {
+                                              "type": "Const",
+                                              "value": "1",
+                                              "original": null
+                                            }
+                                          ],
+                                          "original": null
+                                        }
+                                      ],
+                                      "original": null
+                                    }
+                                  ],
+                                  "original": null
+                                },
+                                {
+                                  "type": "Op",
+                                  "name": "And",
+                                  "args": [
+                                    {
+                                      "type": "Op",
+                                      "name": "Not",
+                                      "args": [
+                                        {
+                                          "type": "Op",
+                                          "name": "And",
+                                          "args": [
+                                            {
+                                              "type": "Op",
+                                              "name": "Gt",
+                                              "args": [
+                                                {
+                                                  "type": "Var",
+                                                  "name": "target",
+                                                  "primed": false,
+                                                  "original": null
+                                                },
+                                                {
+                                                  "type": "Var",
+                                                  "name": "item",
+                                                  "primed": true,
+                                                  "original": null
+                                                }
+                                              ],
+                                              "original": null
+                                            },
+                                            {
+                                              "type": "Op",
+                                              "name": "Eq",
+                                              "args": [
+                                                {
+                                                  "type": "Var",
+                                                  "name": "index",
+                                                  "primed": false,
+                                                  "original": null
+                                                },
+                                                {
+                                                  "type": "Op",
+                                                  "name": "Sub",
+                                                  "args": [
+                                                    {
+                                                      "type": "Op",
+                                                      "name": "len",
+                                                      "args": [
+                                                        {
+                                                          "type": "Var",
+                                                          "name": "array",
+                                                          "primed": false,
+                                                          "original": null
+                                                        }
+                                                      ],
+                                                      "original": null
+                                                    },
+                                                    {
+                                                      "type": "Const",
+                                                      "value": "1",
+                                                      "original": null
+                                                    }
+                                                  ],
+                                                  "original": null
+                                                }
+                                              ],
+                                              "original": null
+                                            }
+                                          ],
+                                          "original": null
+                                        }
+                                      ],
+                                      "original": null
+                                    },
+                                    {
+                                      "type": "Op",
+                                      "name": "And",
+                                      "args": [
+                                        {
+                                          "type": "Op",
+                                          "name": "Gt",
+                                          "args": [
+                                            {
+                                              "type": "Var",
+                                              "name": "target",
+                                              "primed": false,
+                                              "original": null
+                                            },
+                                            {
+                                              "type": "Var",
+                                              "name": "item",
+                                              "primed": true,
+                                              "original": null
+                                            }
+                                          ],
+                                          "original": null
+                                        },
+                                        {
+                                          "type": "Op",
+                                          "name": "Lt",
+                                          "args": [
+                                            {
+                                              "type": "Var",
+                                              "name": "target",
+                                              "primed": false,
+                                              "original": null
+                                            },
+                                            {
+                                              "type": "Op",
+                                              "name": "GetElement",
+                                              "args": [
+                                                {
+                                                  "type": "Var",
+                                                  "name": "array",
+                                                  "primed": false,
+                                                  "original": null
+                                                },
+                                                {
+                                                  "type": "Op",
+                                                  "name": "Add",
+                                                  "args": [
+                                                    {
+                                                      "type": "Var",
+                                                      "name": "index",
+                                                      "primed": false,
+                                                      "original": null
+                                                    },
+                                                    {
+                                                      "type": "Const",
+                                                      "value": "1",
+                                                      "original": null
+                                                    }
+                                                  ],
+                                                  "original": null
+                                                }
+                                              ],
+                                              "original": null
+                                            }
+                                          ],
+                                          "original": null
+                                        }
+                                      ],
+                                      "original": null
+                                    }
+                                  ],
+                                  "original": null
+                                }
+                              ],
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        }
+                      ],
+                      "original": null
+                    }
+                  ],
+                  "original": null
+                }
+              ],
+              "original": null
+            }
+          ],
+          "original": null
+        },
+        {
+          "type": "Op",
+          "name": "ite",
+          "args": [
+            {
+              "type": "Op",
+              "name": "Lt",
+              "args": [
+                {
+                  "type": "Var",
+                  "name": "target",
+                  "primed": false,
+                  "original": null
+                },
+                {
+                  "type": "Var",
+                  "name": "item",
+                  "primed": true,
+                  "original": null
+                }
+              ],
+              "original": null
+            },
+            {
+              "type": "Var",
+              "name": "index",
+              "primed": false,
+              "original": null
+            },
+            {
+              "type": "Op",
+              "name": "ite",
+              "args": [
+                {
+                  "type": "Op",
+                  "name": "Eq",
+                  "args": [
+                    {
+                      "type": "Var",
+                      "name": "target",
+                      "primed": false,
+                      "original": null
+                    },
+                    {
+                      "type": "Var",
+                      "name": "item",
+                      "primed": true,
+                      "original": null
+                    }
+                  ],
+                  "original": null
+                },
+                {
+                  "type": "Var",
+                  "name": "index",
+                  "primed": false,
+                  "original": null
+                },
+                {
+                  "type": "Op",
+                  "name": "ite",
+                  "args": [
+                    {
+                      "type": "Op",
+                      "name": "And",
+                      "args": [
+                        {
+                          "type": "Op",
+                          "name": "Gt",
+                          "args": [
+                            {
+                              "type": "Var",
+                              "name": "target",
+                              "primed": false,
+                              "original": null
+                            },
+                            {
+                              "type": "Var",
+                              "name": "item",
+                              "primed": true,
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        },
+                        {
+                          "type": "Op",
+                          "name": "Eq",
+                          "args": [
+                            {
+                              "type": "Var",
+                              "name": "index",
+                              "primed": false,
+                              "original": null
+                            },
+                            {
+                              "type": "Op",
+                              "name": "Sub",
+                              "args": [
+                                {
+                                  "type": "Op",
+                                  "name": "len",
+                                  "args": [
+                                    {
+                                      "type": "Var",
+                                      "name": "array",
+                                      "primed": false,
+                                      "original": null
+                                    }
+                                  ],
+                                  "original": null
+                                },
+                                {
+                                  "type": "Const",
+                                  "value": "1",
+                                  "original": null
+                                }
+                              ],
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        }
+                      ],
+                      "original": null
+                    },
+                    {
+                      "type": "Var",
+                      "name": "index",
+                      "primed": false,
+                      "original": null
+                    },
+                    {
+                      "type": "Op",
+                      "name": "ite",
+                      "args": [
+                        {
+                          "type": "Op",
+                          "name": "And",
+                          "args": [
+                            {
+                              "type": "Op",
+                              "name": "Gt",
+                              "args": [
+                                {
+                                  "type": "Var",
+                                  "name": "target",
+                                  "primed": false,
+                                  "original": null
+                                },
+                                {
+                                  "type": "Var",
+                                  "name": "item",
+                                  "primed": true,
+                                  "original": null
+                                }
+                              ],
+                              "original": null
+                            },
+                            {
+                              "type": "Op",
+                              "name": "Lt",
+                              "args": [
+                                {
+                                  "type": "Var",
+                                  "name": "target",
+                                  "primed": false,
+                                  "original": null
+                                },
+                                {
+                                  "type": "Op",
+                                  "name": "GetElement",
+                                  "args": [
+                                    {
+                                      "type": "Var",
+                                      "name": "array",
+                                      "primed": false,
+                                      "original": null
+                                    },
+                                    {
+                                      "type": "Op",
+                                      "name": "Add",
+                                      "args": [
+                                        {
+                                          "type": "Var",
+                                          "name": "index",
+                                          "primed": false,
+                                          "original": null
+                                        },
+                                        {
+                                          "type": "Const",
+                                          "value": "1",
+                                          "original": null
+                                        }
+                                      ],
+                                      "original": null
+                                    }
+                                  ],
+                                  "original": null
+                                }
+                              ],
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        },
+                        {
+                          "type": "Var",
+                          "name": "index",
+                          "primed": false,
+                          "original": null
+                        },
+                        {
+                          "type": "Op",
+                          "name": "AssAdd",
+                          "args": [
+                            {
+                              "type": "Var",
+                              "name": "index",
+                              "primed": false,
+                              "original": null
+                            },
+                            {
+                              "type": "Const",
+                              "value": "1",
+                              "original": null
+                            }
+                          ],
+                          "original": null
+                        }
+                      ],
+                      "original": null
+                    }
+                  ],
+                  "original": null
+                }
+              ],
+              "original": null
+            }
+          ],
+          "original": null
+        },
+        {
+          "type": "Var",
+          "name": "index",
+          "primed": false,
+          "original": null
+        }
+      ],
+      "original": null
+    },
+    "src": "submissions/exp/term1/p1/a5.py"
+  }
+]
