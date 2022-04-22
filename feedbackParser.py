@@ -1,37 +1,40 @@
 import re
 
 
-# remove cost to edit information
 def remove_cost(string):
+    """remove the cost from the feedback message"""
     pattern = "\(cost=.+\)"
     replace = ''
     string = re.sub(pattern, replace, string)
     return string.strip()
 
 
-# adds 'at line number' for clarification of message
 def add_line_to_line_number(string):
+    """adds 'at line number' before line number in the feedback message"""
     pattern = 'at (?=\d)'
     return re.sub(pattern, 'at line ', string)
 
 
-# post process feedback. it splits the feedback message lines into sepearte lines. Adds carets underneath to highlight
-# the nonmatching words
+#
 def post_process_feedback(string):
+    """
+    splits the feedback message lines into sepearte lines.gets the index of the places where strings dont match.
+    Adds carets underneath to highlight the nonmatching words
+    """
     pattern = "('.*')\nto\n('.*')"
     array = string.split('\n')
     matches = re.findall(pattern, string)
     array2 = []
     array3 = []
-    h = None
+    caret_strings = None
     for i in range(len(array)):
         array2.append(array[i])
         array3.append(array[i])
-        if h is not None:
+        if caret_strings is not None:
             array2.pop()
-            array2.append(h)
+            array2.append(caret_strings)
             array3[-1] = l1
-            h = None
+            caret_strings = None
         if i != 0 and array[i] == 'to':
             for match in matches:
                 if array[i - 1] == match[0] and array[i + 1] == match[1]:
@@ -40,18 +43,19 @@ def post_process_feedback(string):
                     s, t = generate_caret_strings((s, t))
                     array2.pop(-2)
                     array2.insert(-1, s)
-                    h = t
-
-    # convert strings to array via split
-    # get the index of the places where strings dont match
-    # insert caret underneath to highlight non matching strings
+                    caret_strings = t
     string = '\n'.join(array2)
     l1_string = '\n'.join(array3)
     return string, l1_string
 
 
-#  function to generate carets under nonmatching words
 def generate_caret_strings(match):
+    """generate carets under nonmatching words:
+    split the strings to arrays containing words and spaces
+    checks if words in two strings are different and then generate caret strings to hightlight difference.
+    It will generate caret for the words under the larger strings after it finishes iterateing both arrays by length.
+    It generates careted strings to be placed under feedback message code strings
+    """
     s, t = match
     arr1 = s.split()
     arr2 = t.split()
@@ -86,8 +90,8 @@ def generate_caret_strings(match):
         return break_lines(s, t, cs1, cs)
 
 
-# break lines if line length would cause jupyter cell to overflow
 def break_lines(s, t, cs1, cs2):
+    """break lines if line length would cause jupyter cell to overflow"""
     rs = rt = ''
     if len(s) < 111:
         return s + '\n' + cs1, t + '\n' + cs2
@@ -100,8 +104,9 @@ def break_lines(s, t, cs1, cs2):
     return rs, rt
 
 
-# helper function to separte pairs of brackers in comments from code
 def separate_brackets(match):
+    """helper function to separate pairs of brackets from comments in feedback message and not alter the ones that are
+    part of codes and suggested fixes"""
     s, t = match
     s = s[1:-1]
     t = t[1:-1]
@@ -128,8 +133,8 @@ def separate_brackets(match):
         return "'" + t + "'", "'" + t + "'"
 
 
-# stitches up strings in code with original spaces preserved
 def gen_new_string(s):
+    """stitches up strings in code with original spaces preserved"""
     single_quote_indices = [x.start() for x in list(re.finditer('[\']', s))]
     double_quote_indices = [x.start() for x in list(re.finditer('["]', s))]
     escape_single_quote_indices = [x.start() for x in list(re.finditer('\\\\\'', '\\\'', s))]
@@ -155,9 +160,9 @@ def gen_new_string(s):
     return s
 
 
-# gets string indices
 def get_string_indices(single_quote_indices, double_quote_indices, escape_single_quote_indices,
                        escape_double_quote_indices):
+    """gets indices of strings in the feedback messages after comparing quote symbol indices and escape quote indices"""
     string_indices = []
 
     while single_quote_indices or double_quote_indices:
@@ -188,6 +193,7 @@ def get_string_indices(single_quote_indices, double_quote_indices, escape_single
 
 # generate indices for strings in codes
 def string_indices_generator(indices, indices2, escape_indices, escape_indices2):
+    """generates string indices of strings from quote indices arrays"""
     quote_pair = []
     if indices:
         v = indices.pop(0)
@@ -211,8 +217,9 @@ def string_indices_generator(indices, indices2, escape_indices, escape_indices2)
     return quote_pair, indices, indices2, escape_indices, escape_indices2
 
 
-#  generates first level hint
+# this function is not used in the current implementation of clippy yet
 def gen_first_level_hint(s, t):
+    """generates first level hint"""
     arr1 = s.split()
     arr2 = t.split()
     sp2 = re.split(r'\S+', t)[1:]
@@ -225,8 +232,8 @@ def gen_first_level_hint(s, t):
     return string
 
 
-# the main function that invokes all the function to make changes to feedback messages
 def postparse(string):
+    """the main function that invokes all the function to make changes to feedback messages"""
     string = remove_cost(string)
     string = add_line_to_line_number(string)
     string, l1_string = post_process_feedback(string)
