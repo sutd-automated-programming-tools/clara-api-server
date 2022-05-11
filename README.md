@@ -67,7 +67,8 @@ Docker
 Create a clone of the project and run the docker script:
 ```
 git clone https://github.com/sutd-automated-programming-tools/clara-api-server.git
-. dockerscript.sh
+docker build . -t clara
+docker compose up
 ```
 Debian note
 ===========
