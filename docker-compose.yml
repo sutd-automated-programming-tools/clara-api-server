@@ -1,0 +1,8 @@
+services:
+  clara:
+    ports:
+      - 80:80
+    volumes:
+      - ./submissions:/clara-api-server/submissions
+      - ./clusters:/clara-api-server/clusters
+    image: clara
