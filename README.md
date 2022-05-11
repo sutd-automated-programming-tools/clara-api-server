@@ -56,7 +56,19 @@ Development
 - Install `Cython` (using `pip install Cython` inside the new virtual enviroment)
 - Run `python setup.py develop`
 
-
+###OR
+Create a clone of the project and run the local installation script:
+```
+git clone https://github.com/sutd-automated-programming-tools/clara-api-server.git
+. install_local.sh
+```
+Docker
+======
+Create a clone of the project and run the docker script:
+```
+git clone https://github.com/sutd-automated-programming-tools/clara-api-server.git
+. dockerscript.sh
+```
 Debian note
 ===========
 On Debian system the following is required before running the tool: `export LD_LIBRARY_PATH=/usr/lib/lp_solve/`
