@@ -11,21 +11,11 @@ programming assignments, described in the following paper:
 
 Deployment
 ===========
-Launch a new ubuntu 20.04 Ec2 instance \
-Run the following commands in the terminal: 
+
 ```bash
-echo '-----BEGIN OPENSSH PRIVATE KEY-----
-b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
-QyNTUxOQAAACAb4PQAtA0LXl1x8NS/K0tIetEeQ0h+LawHh6vmcC8TAQAAAKDRzJzJ0cyc
-yQAAAAtzc2gtZWQyNTUxOQAAACAb4PQAtA0LXl1x8NS/K0tIetEeQ0h+LawHh6vmcC8TAQ
-AAAEDP2m4Oj62JHli+iF2kvTXJUkW4KeemNeaFNu0SZT9bkxvg9AC0DQteXXHw1L8rS0h6
-0R5DSH4trAeHq+ZwLxMBAAAAF2lzaG1hbWFsaG9xdWVAZ21haWwuY29tAQIDBAUG
------END OPENSSH PRIVATE KEY-----
-'>~/.ssh/id_ed25519
-chmod 600 ~/.ssh/id_ed25519
 git clone git@github.com:sutd-automated-programming-tools/clara-api-server.git
 ```
-Type `yes` to prompt\
+
 Run:
 ```bash
 cd clara-api-server
