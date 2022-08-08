@@ -1,0 +1,25 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: API Server for CLARA-S
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Ismam
+    name-particle: Al
+    family-names: Hoque
+    email: ismam_hoque@sutd.edu.sg
+    affiliation: Singapore University of Technology and Design
+  - given-names: Oka
+    family-names: Kurniawan
+    email: oka_kurniawan@sutd.edu.sg
+    affiliation: Singapore University of Technology and Design
+    orcid: 'https://orcid.org/0000-0001-9519-0959'
+  - given-names: Chris
+    family-names: Poskitt
+    email: cposkitt@smu.edu.sg
+    affiliation: Singapore Management University
+    orcid: 'https://orcid.org/0000-0002-9376-2471'
